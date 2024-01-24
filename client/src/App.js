@@ -2,25 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import './App.css';
 import io from "socket.io-client";
 import Peer from "simple-peer";
-import styled from "styled-components";
-
-const Container = styled.div`
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-`;
-
-const Row = styled.div`
-    display: flex;
-    width: 100%;
-`;
-
-const Video = styled.video`
-    border: 1px solid blue;
-    width: 50%;
-    height: 50%;
-`;
 
 function App() {
     const [yourID, setYourID] = useState("");
@@ -174,14 +155,14 @@ function App() {
     let UserVideo;
     if (stream) {
         UserVideo = (
-            <Video playsInline muted ref={userVideo} autoPlay />
+            <video playsInline muted ref={userVideo} autoPlay />
         );
     }
 
     let PartnerVideo;
     if (callAccepted) {
         PartnerVideo = (
-            <Video playsInline ref={partnerVideo} autoPlay />
+            <video playsInline ref={partnerVideo} autoPlay />
         );
     }
 
@@ -195,39 +176,52 @@ function App() {
         )
     }
     return (
-        <Container>
-            <Row>
-                {UserVideo}
-                {PartnerVideo}
-            </Row>
-            <div>
-                <h2>Chat</h2>
-                <div>
-                    {receivedMessages.map((msg, index) => (
-                        <p key={index}>{msg}</p>
-                    ))}
+        <div className="container">
+            <div className=" video-group">
+                <div className="user-video video-wrapper">
+                    {UserVideo}
                 </div>
-                <input
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    type="text"
-                />
-                <button onClick={sendMessage}>Send</button>
+                <div className="partner-video video-wrapper">
+                    {PartnerVideo}
+                </div>
             </div>
-            <Row>
-                {Object.keys(users).map(key => {
-                    if (key === yourID) {
-                        return null;
-                    }
-                    return (
-                        <button onClick={() => callPeer(key)}>Call {key}</button>
-                    );
-                })}
-            </Row>
-            <Row>
+            <div className='dashboard-row'>
+                <div className="row sessions">
+                    {Object.keys(users).map(key => {
+                        if (key === yourID) {
+                            return null;
+                        }
+                        return (
+                            <button className="call-button" onClick={() => callPeer(key)}>Call {key}</button>
+                        );
+                    })}
+                </div>
+                <div className="chat-session">
+                    <h2>Chat</h2>
+                    <div className="chat-messages">
+                        {receivedMessages.map((msg, index) => (
+                            <p key={index}>{msg}</p>
+                        ))}
+                    </div>
+                    <div className='default-col'>
+                        <input
+                            className="chat-input"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            type="text"
+                            placeholder="Type message here..."
+                        />
+                        <button className="chat-button" onClick={sendMessage}>Send</button>
+                    </div>
+                </div>
+                <div className="row sessions">
+
+                </div>
+            </div>
+            <div className="row incoming-call">
                 {incomingCall}
-            </Row>
-        </Container>
+            </div>
+        </div>
     );
 }
 
