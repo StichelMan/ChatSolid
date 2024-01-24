@@ -30,11 +30,14 @@ function App() {
     const [caller, setCaller] = useState("");
     const [callerSignal, setCallerSignal] = useState();
     const [callAccepted, setCallAccepted] = useState(false);
+    const [message, setMessage] = useState(""); // Current message being typed
+    const [receivedMessages, setReceivedMessages] = useState([]); // Array of received messages
 
     const userVideo = useRef();
     const partnerVideo = useRef();
     const socket = useRef();
     const peerRef = useRef(); // Ref for peer instance
+    const dataChannelRef = useRef(); // Ref for data channel
 
     useEffect(() => {
         socket.current = io.connect("/");
@@ -92,6 +95,14 @@ function App() {
             stream: stream,
         });
 
+        // Create a data channel
+        peer.on('connect', () => {
+            dataChannelRef.current = peer;
+        });
+
+        // Handle incoming messages
+        peer.on('data', handleMessageReceive);
+
         peer.on("signal", data => {
             socket.current.emit("callUser", { userToCall: id, signalData: data, from: yourID })
         })
@@ -123,6 +134,14 @@ function App() {
             stream: stream,
         });
 
+        // Create a data channel
+        peer.on('connect', () => {
+            dataChannelRef.current = peer;
+        });
+
+        // Handle incoming messages
+        peer.on('data', handleMessageReceive);
+
         peer.on("signal", data => {
             if (!peer.destroyed) {
                 socket.current.emit("acceptCall", { signal: data, to: caller });
@@ -138,6 +157,18 @@ function App() {
         }
         peerRef.current = peer;
     }
+
+    const handleMessageReceive = (data) => {
+        setReceivedMessages(oldMsgs => [...oldMsgs, data.toString()]);
+    };
+
+    const sendMessage = () => {
+        if (dataChannelRef.current && message !== "") {
+            dataChannelRef.current.send(message);
+            setReceivedMessages(oldMsgs => [...oldMsgs, `You: ${message}`]);
+            setMessage("");
+        }
+    };
 
 
     let UserVideo;
@@ -169,6 +200,20 @@ function App() {
                 {UserVideo}
                 {PartnerVideo}
             </Row>
+            <div>
+                <h2>Chat</h2>
+                <div>
+                    {receivedMessages.map((msg, index) => (
+                        <p key={index}>{msg}</p>
+                    ))}
+                </div>
+                <input
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    type="text"
+                />
+                <button onClick={sendMessage}>Send</button>
+            </div>
             <Row>
                 {Object.keys(users).map(key => {
                     if (key === yourID) {
