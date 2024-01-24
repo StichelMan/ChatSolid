@@ -175,8 +175,20 @@ function App() {
             </div>
         )
     }
+
+    const handleKeyPress = (e) => {
+        // Check if the pressed key is 'Enter'
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    };
+
     return (
         <div className="container">
+            <div className="title-section">
+                <h1 className="title">ChatSolid</h1>
+                <p className="subtitle">By Eli Van Stichelen</p>
+            </div>
             <div className=" video-group">
                 <div className="user-video video-wrapper">
                     {UserVideo}
@@ -187,17 +199,24 @@ function App() {
             </div>
             <div className='dashboard-row'>
                 <div className="row sessions">
-                    {Object.keys(users).map(key => {
-                        if (key === yourID) {
-                            return null;
-                        }
-                        return (
-                            <button className="call-button" onClick={() => callPeer(key)}>Call {key}</button>
-                        );
-                    })}
+                    {Object.keys(users).length > 0 && (
+                        (() => {
+                            const latestUserKey = Object.keys(users)[Object.keys(users).length - 1];
+                            if (latestUserKey === yourID) {
+                                return null;
+                            }
+                            return (
+                                <button className="call-button" onClick={() => callPeer(latestUserKey)}>
+                                    Call {latestUserKey}
+                                </button>
+                            );
+                        })()
+                    )}
                 </div>
                 <div className="chat-session">
-                    <h2>Chat</h2>
+                    <div className="title-section chat-title">
+                        <h2>Solid Chat</h2>
+                    </div>
                     <div className="chat-messages">
                         {receivedMessages.map((msg, index) => (
                             <p key={index}>{msg}</p>
@@ -208,6 +227,7 @@ function App() {
                             className="chat-input"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
+                            onKeyPress={handleKeyPress}
                             type="text"
                             placeholder="Type message here..."
                         />
@@ -218,9 +238,9 @@ function App() {
 
                 </div>
             </div>
-            <div className="row incoming-call">
+            {incomingCall && !callAccepted && <div className="row incoming-call">
                 {incomingCall}
-            </div>
+            </div>}
         </div>
     );
 }

@@ -66,18 +66,50 @@ video {
     gap: 20px;
 }
 
-/*.incoming-call{*/
-/*    position: absolute;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*    border-radius: 8px;*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    align-items: center;*/
-/*    justify-content: center;*/
-/*}*/
+.title-section {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.chat-title{
+    background-color: #dddddd;
+    width: 100%;
+    height: 4rem;
+    border-radius: 10px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.title {
+    padding: 0;
+    margin: 0;
+    font-size: 2em;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.subtitle {
+    padding: 0;
+    margin: 0;
+    font-size: 1.2em;
+    color: #9f9f9f;
+}
+
+.incoming-call {
+    position: fixed;      /* Fixed position relative to the viewport */
+    top: 50%;             /* Center vertically */
+    left: 50%;            /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for the element's own size */
+    /* Add additional styling as needed */
+    z-index: 1000;        /* Ensure it's above other elements */
+    /* Optionally add a background, padding, etc., to make it stand out */
+    background: #fff;     /* Example background */
+    padding: 20px;        /* Example padding */
+    border-radius: 8px;   /* Example border styling */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Example shadow for visibility */
+}
 
 .sessions-mirror{
     max-width: 20rem;
