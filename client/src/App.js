@@ -76,7 +76,7 @@ function App() {
 
 
 
-  
+
 
 
 
@@ -130,7 +130,6 @@ function App() {
             config: {
                 iceServers: [
                     { urls: "stun:stun.l.google.com:19302" },
-                    // Add TURN server here if you have one
                 ]
             },
             stream: stream,
@@ -183,21 +182,16 @@ function App() {
             }
         });
 
-
+        peer.on('data', handleMessageReceive);
         // Create a data channel
         peer.on('connect', () => {
             dataChannelRef.current = peer;
         });
-
-        // Handle incoming messages
-        peer.on('data', handleMessageReceive);
-
         peer.on("signal", data => {
             if (!peer.destroyed) {
                 socket.current.emit("acceptCall", { signal: data, to: caller });
             }
         });
-
         peer.on("stream", stream => {
             partnerVideo.current.srcObject = stream;
         });
@@ -219,8 +213,6 @@ function App() {
             setMessage("");
         }
     };
-
-
     let UserVideo;
     if (stream) {
         UserVideo = (
