@@ -2,6 +2,20 @@ import React, { useEffect, useState, useRef } from 'react';
 import './App.css';
 import io from "socket.io-client";
 import Peer from "simple-peer";
+import {fetch, getDefaultSession, handleIncomingRedirect, login} from "@inrupt/solid-client-authn-browser";
+import {
+    addStringNoLocale,
+    addUrl,
+    createSolidDataset,
+    createThing,
+    getPodUrlAll,
+    getSolidDataset, getStringNoLocale, getThing,
+    getThingAll,
+    removeThing,
+    saveSolidDatasetAt,
+    setThing
+} from "@inrupt/solid-client";
+import {AS, RDF, SCHEMA_INRUPT} from "@inrupt/vocab-common-rdf";
 
 function App() {
     const [yourID, setYourID] = useState("");
@@ -13,12 +27,58 @@ function App() {
     const [callAccepted, setCallAccepted] = useState(false);
     const [message, setMessage] = useState(""); // Current message being typed
     const [receivedMessages, setReceivedMessages] = useState([]); // Array of received messages
+    const [webID, setWebID] = useState(""); // WebID of the user
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // Authentication status
 
     const userVideo = useRef();
     const partnerVideo = useRef();
     const socket = useRef();
     const peerRef = useRef(); // Ref for peer instance
     const dataChannelRef = useRef(); // Ref for data channel
+
+    const CHAT_FILE_PATH = "/chats/";
+
+    async function saveChatToPod(webID, chatContent) {
+        const podUrl = new URL(CHAT_FILE_PATH, webID).href;
+        let chatDataset;
+        try {
+            chatDataset = await getSolidDataset(podUrl, { fetch: fetch });
+        } catch (error) {
+            if (error.statusCode === 404) {
+                chatDataset = createSolidDataset();
+            } else {
+                throw error;
+            }
+        }
+
+        let chatThing = createThing({ name: "chat" });
+        chatThing = addStringNoLocale(chatThing, SCHEMA_INRUPT.text, JSON.stringify(chatContent));
+        chatDataset = setThing(chatDataset, chatThing);
+
+        await saveSolidDatasetAt(podUrl, chatDataset, { fetch: fetch });
+    }
+
+    async function fetchChatFromPod(webID) {
+        const podUrl = new URL(CHAT_FILE_PATH, webID).href;
+        try {
+            const chatDataset = await getSolidDataset(podUrl, { fetch: fetch });
+            const chatThing = getThing(chatDataset, `${podUrl}#chat`);
+            const chatContent = getStringNoLocale(chatThing, SCHEMA_INRUPT.text);
+            return JSON.parse(chatContent);
+        } catch (error) {
+            if (error.statusCode === 404) {
+                return []; // Return an empty array if chat file doesn't exist
+            } else {
+                throw error;
+            }
+        }
+    }
+
+
+
+  
+
+
 
     useEffect(() => {
         socket.current = io.connect("/");
@@ -115,6 +175,15 @@ function App() {
             stream: stream,
         });
 
+        peer.on('connect', async () => {
+            dataChannelRef.current = peer;
+            if (isLoggedIn) {
+                const chatHistory = await fetchChatFromPod(webID);
+                setReceivedMessages(chatHistory);
+            }
+        });
+
+
         // Create a data channel
         peer.on('connect', () => {
             dataChannelRef.current = peer;
@@ -183,12 +252,39 @@ function App() {
         }
     };
 
+    const handleLogin = async () => {
+        const oidcIssuer = 'https://login.inrupt.com';
+        const redirectUrl = window.location.href;
+        await login({ oidcIssuer, redirectUrl });
+    };
+
+    useEffect(() => {
+        (async () => {
+            await handleIncomingRedirect();
+            const session = getDefaultSession();
+            if (session.info.isLoggedIn) {
+                setWebID(session.info.webId);
+                setIsLoggedIn(true);
+            }
+        })();
+    }, []);
+
     return (
         <div className="container">
             <div className="title-section">
                 <h1 className="title">ChatSolid</h1>
                 <p className="subtitle">By Eli Van Stichelen</p>
             </div>
+            {!isLoggedIn ? (
+                <div className="auth-section">
+                    <h3>Login with Solid</h3>
+                    <button onClick={handleLogin}>Login with Inrupt</button>
+                </div>
+            ) : (
+                <div>
+                    <p>Logged in as: {webID}</p>
+                </div>
+            )}
             <div className=" video-group">
                 <div className="user-video video-wrapper">
                     {UserVideo}
