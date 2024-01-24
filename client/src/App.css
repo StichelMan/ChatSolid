@@ -82,6 +82,25 @@ video {
     justify-content: center;
 }
 
+/*.join-chat-container {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    height: 100vh;*/
+/*}*/
+
+/*.join-chat-container input {*/
+/*    padding: 10px;*/
+/*    margin-bottom: 10px;*/
+/*    width: 200px;*/
+/*}*/
+
+/*.join-chat-container button {*/
+/*    padding: 10px 20px;*/
+/*    cursor: pointer;*/
+/*}*/
+
 .title {
     padding: 0;
     margin: 0;
@@ -172,7 +191,7 @@ video {
 
 .call-button {
     max-width: 12rem;
-    background-color: #28a745;
+    background-color: #669d23;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -182,5 +201,5 @@ video {
 }
 
 .call-button:hover {
-    background-color: #218838;
+    background-color: #4b731a;
 }
