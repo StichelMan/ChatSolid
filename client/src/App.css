@@ -8,15 +8,17 @@ body {
 .container {
     display: flex;
     flex-direction: column;
+    /*flex-wrap: wrap;*/
     align-items: center;
     justify-content: center;
-    height: 100vh;
     padding: 20px;
     box-sizing: border-box;
 }
 
 
 video {
+    height: 100%;
+    width: 100%;
     max-height: 20rem;
     object-fit: cover;
 }
@@ -30,40 +32,52 @@ video {
     justify-content: center;
 }
 
-.video-group{
+.video-group {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 20px;
 }
 
 .video-wrapper {
     border-radius: 10px;
     overflow: hidden;
-    margin: 1rem;
+    margin: .5rem 0.1rem;
+    height: 20rem;
+    width: 26rem;
+    position: relative;
 }
 
 .user-video {
-    border: 2px solid #9d2323;
+    border: 3px solid #9d2323;
 }
 
 .partner-video {
-    border: 2px solid #669d23;
+    border: 3px solid #669d23;
 }
 
-.Video {
-    border-radius: 8px;
-    margin: 0 10px;
+.user-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    margin: 0 auto;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 1rem;
 }
 
-.dashboard-row{
+
+.dashboard-row {
     width: 100%;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .title-section {
@@ -72,13 +86,14 @@ video {
     margin: 0;
 }
 
-.chat-title{
+.chat-title {
     background-color: #dddddd;
     width: 100%;
     height: 4rem;
     border-radius: 10px;
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
@@ -117,27 +132,22 @@ video {
 }
 
 .incoming-call {
-    position: fixed;      /* Fixed position relative to the viewport */
-    top: 50%;             /* Center vertically */
-    left: 50%;            /* Center horizontally */
+    position: fixed; /* Fixed position relative to the viewport */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
     transform: translate(-50%, -50%); /* Adjust for the element's own size */
     /* Add additional styling as needed */
-    z-index: 1000;        /* Ensure it's above other elements */
+    z-index: 1000; /* Ensure it's above other elements */
     /* Optionally add a background, padding, etc., to make it stand out */
-    background: #fff;     /* Example background */
-    padding: 20px;        /* Example padding */
-    border-radius: 8px;   /* Example border styling */
+    background: #fff; /* Example background */
+    padding: 20px; /* Example padding */
+    border-radius: 8px; /* Example border styling */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Example shadow for visibility */
 }
 
-.sessions-mirror{
-    max-width: 20rem;
-    max-height: 20rem;
-    overflow-y: auto;
-}
 
-.sessions{
-    max-width: 20rem;
+.sessions {
+    width: 13.2rem;
     max-height: 20rem;
     overflow-y: auto;
 }
@@ -167,10 +177,11 @@ video {
     width: 90%;
 }
 
-.default-col{
+.default-col {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
 }
@@ -198,8 +209,45 @@ video {
     border-radius: 4px;
     margin: 10px;
     cursor: pointer;
+    font-size: .7rem
 }
 
 .call-button:hover {
     background-color: #4b731a;
+}
+
+.login-button{
+    cursor: pointer;
+}
+
+.logout-button{
+    cursor: pointer;
+}
+
+.authentication-section {
+    background-color: #dddddd;
+    border-radius: 1rem;
+    padding: .5rem 1rem;
+    font-size: 0.8rem;
+    text-align: center;
+    max-width: 10rem;
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.info{
+    background-color: #a14747;
+    padding: 1rem;
+    border-radius: .5rem;
+    text-align: center;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+
+.underlined{
+    text-decoration: underline;
 }
