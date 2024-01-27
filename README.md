@@ -21,6 +21,7 @@ authentication logic.
 ### Installation
 Depending on your preference, you can use either npm or yarn to install this package. Please change your package.json scripts accordingly and only do so if you know what you are doing.
 1. Run the Socket.io server for WebRTC communication
+
 NPM:
 ```bash
 npm install
@@ -46,6 +47,7 @@ yarn start
 ```bash
 cd client
 ```
+
 NPM:
 ```bash
 npm install
