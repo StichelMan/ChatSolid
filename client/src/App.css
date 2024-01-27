@@ -3,16 +3,17 @@ body {
     margin: 0;
     padding: 0;
     background-color: #252525;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .container {
     display: flex;
     flex-direction: column;
-    /*flex-wrap: wrap;*/
     align-items: center;
     justify-content: center;
     padding: 20px;
     box-sizing: border-box;
+    min-height: 100vh; /* Ensure the container fills the screen */
 }
 
 video {
