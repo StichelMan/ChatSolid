@@ -56,3 +56,6 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# jetbrains saved settings folder
+.idea
