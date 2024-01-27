@@ -5,7 +5,6 @@ import Peer from "simple-peer";
 import {SessionProvider, LoginButton, LogoutButton, useSession} from "@inrupt/solid-ui-react";
 import {
     getSolidDataset,
-    getThingAll,
     setThing,
     createSolidDataset,
     saveSolidDatasetAt,
@@ -260,19 +259,19 @@ function App() {
         try {
             let dataset;
             try {
-                dataset = await getSolidDataset(storageUrl, { fetch: session.fetch });
+                dataset = await getSolidDataset(storageUrl, {fetch: session.fetch});
             } catch (error) {
                 // If the dataset does not exist, create a new one
                 dataset = createSolidDataset();
             }
 
-            const newMessageThing = createThing({ name: `message-${new Date().toISOString()}` });
+            const newMessageThing = createThing({name: `message-${new Date().toISOString()}`});
             const updatedMessageThing = addStringNoLocale(
                 newMessageThing, FOAF.name, `${isOutgoing ? "You" : "Other"}: ${message}`
             );
 
             const updatedDataset = setThing(dataset, updatedMessageThing);
-            await saveSolidDatasetAt(storageUrl, updatedDataset, { fetch: session.fetch });
+            await saveSolidDatasetAt(storageUrl, updatedDataset, {fetch: session.fetch});
         } catch (error) {
             console.error("Error saving message to Solid pod:", error);
         }
@@ -298,7 +297,7 @@ function App() {
         const podUrl = new URL(CHAT_FILE_PATH, webID).href;
         let chatDataset;
         try {
-            chatDataset = await getSolidDataset(podUrl, { fetch: fetch });
+            chatDataset = await getSolidDataset(podUrl, {fetch: fetch});
         } catch (error) {
             if (error.statusCode === 404) {
                 chatDataset = createSolidDataset();
@@ -307,17 +306,17 @@ function App() {
             }
         }
 
-        let chatThing = createThing({ name: "chat" });
+        let chatThing = createThing({name: "chat"});
         chatThing = addStringNoLocale(chatThing, SCHEMA_INRUPT.text, JSON.stringify(chatContent));
         chatDataset = setThing(chatDataset, chatThing);
 
-        await saveSolidDatasetAt(podUrl, chatDataset, { fetch: fetch });
+        await saveSolidDatasetAt(podUrl, chatDataset, {fetch: fetch});
     }
 
     async function fetchChatFromPod(webID) {
         const podUrl = new URL(CHAT_FILE_PATH, webID).href;
         try {
-            const chatDataset = await getSolidDataset(podUrl, { fetch: fetch });
+            const chatDataset = await getSolidDataset(podUrl, {fetch: fetch});
             const chatThing = getThing(chatDataset, `${podUrl}#chat`);
             const chatContent = getStringNoLocale(chatThing, SCHEMA_INRUPT.text);
             return JSON.parse(chatContent);
@@ -361,9 +360,9 @@ function App() {
     let incomingCall;
     if (receivingCall) {
         incomingCall = (
-            <div>
+            <div className="callpopup-wrapper">
                 <h1>{caller} is calling you</h1>
-                <button onClick={acceptCall}>Accept</button>
+                <button className="action-button" onClick={acceptCall}>Accept</button>
             </div>
         )
         callStatus = (
@@ -410,7 +409,7 @@ function App() {
         if (receivingCall || callAccepted || sendingRequest) return (
             <>
                 <p>{!callAccepted ? callStatus : 'Connected'}</p>
-                <button onClick={() => endCall()}>
+                <button className='action-button' onClick={() => endCall()}>
                     <span className='bold'>Disconnect</span>
                 </button>
             </>
@@ -433,26 +432,28 @@ function App() {
                     <p className="subtitle">By Eli Van Stichelen</p>
                 </div>
                 <div className="video-group">
-                    <div>
-                        {stream && session?.info?.isLoggedIn && <p>WebID: {yourID}</p>}
-                        <div className="user-video video-wrapper">
-                            {UserVideo}
-                            <p className="user-label">Me</p>
-                        </div>
+                    {/*{stream && session?.info?.isLoggedIn && <p>WebID: {yourID}</p>}*/}
+                    <div className="user-video video-wrapper">
+                        {UserVideo}
+                        {/*{callAccepted ? UserVideo : ''}*/}
+                        <p className="user-label">Me</p>
                     </div>
-                    <div>
-                        {stream && session?.info?.isLoggedIn && <p>WebID: {yourID}</p>}
-                        <div className="partner-video video-wrapper">
-                            {PartnerVideo}
-                            <p className="user-label">Other user</p>
-                        </div>
+                    {/*{stream && session?.info?.isLoggedIn && <p>WebID: {yourID}</p>}*/}
+                    <div className={"partner-video video-wrapper" + (!callAccepted ? " disabled" : "")}>
+                        {PartnerVideo}
+                        <p className="user-label">Other user</p>
+                        {!callAccepted && (
+                            <div className="no-session">
+                                No current session
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className='dashboard-row'>
-                    <div className="default-col info sessions">
+                    <div className="info">
                         {renderCallButtons()}
                     </div>
-                    <div className="chat-session">
+                    <div className={"chat-session" + (!callAccepted ? " disabled" : "")}>
                         <div className="title-section chat-title">
                             <h2>Solid Chat</h2>
                         </div>
@@ -461,31 +462,39 @@ function App() {
                                 <p key={index}>{msg}</p>
                             ))}
                         </div>
-                        <div className='default-col'>
+                        <div className="input-actions">
                             <input
-                                className="chat-input"
+                                className="input"
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 type="text"
                                 placeholder="Type message here..."
                             />
-                            <button className="chat-button" onClick={sendMessage}>Send</button>
+                            <button className='action-button' onClick={sendMessage}>Send</button>
                         </div>
+                        {!callAccepted && (
+                            <div className="no-session">
+                                No current session
+                            </div>
+                        )}
                     </div>
-                    <div className="default-col info sessions">
+                    <div className="info">
                         <AuthSection/>
-                        <p className='bold'>Current User ID:<br/> {yourID}</p>
-                        <div>
-                            <input type="text" placeholder="Enter your name" value={userName}
+                        <p className="bold overflow-breakword">Current User ID:<br/> {yourID}</p>
+                        <div className="input-actions">
+                            <input className="input" type="text" placeholder="Enter your name" value={userName}
                                    onChange={(e) => setUserName(e.target.value)}/>
-                            <button onClick={handleSetUserName}>Set Name</button>
+                            <button className="action-button" onClick={handleSetUserName}>Set Name</button>
                         </div>
                     </div>
                 </div>
                 {incomingCall && !callAccepted &&
-                    <div className="row incoming-call">
-                        {incomingCall}
+                    <div className="incoming-call">
+                        <div className="callpopup-wrapper">
+                            <h1>{caller} is calling you</h1>
+                            <button className="action-button" onClick={acceptCall}>Accept</button>
+                        </div>
                     </div>
                 }
             </div>

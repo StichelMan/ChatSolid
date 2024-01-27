@@ -6,20 +6,25 @@ body {
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 1rem;
     box-sizing: border-box;
-    min-height: 100vh; /* Ensure the container fills the screen */
+    min-height: 100vh;
 }
+
 
 video {
     height: 100%;
     width: 100%;
-    max-height: 20rem;
     object-fit: cover;
 }
 
@@ -38,15 +43,17 @@ video {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
+    gap: .5rem;
+    padding: 1rem;
+    width: 100%;
 }
 
 .video-wrapper {
     border-radius: 10px;
     overflow: hidden;
-    margin: .5rem 0.1rem;
-    height: 20rem;
-    width: 26rem;
+    height: 15rem;
     position: relative;
+    min-width: 20rem;
 }
 
 .user-video {
@@ -81,7 +88,12 @@ video {
 }
 
 .title-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    gap: 0;
     padding: 0;
     margin: 0;
 }
@@ -97,25 +109,6 @@ video {
     justify-content: center;
 }
 
-/*.join-chat-container {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    align-items: center;*/
-/*    justify-content: center;*/
-/*    height: 100vh;*/
-/*}*/
-
-/*.join-chat-container input {*/
-/*    padding: 10px;*/
-/*    margin-bottom: 10px;*/
-/*    width: 200px;*/
-/*}*/
-
-/*.join-chat-container button {*/
-/*    padding: 10px 20px;*/
-/*    cursor: pointer;*/
-/*}*/
-
 .title {
     padding: 0;
     margin: 0;
@@ -127,38 +120,56 @@ video {
 .subtitle {
     padding: 0;
     margin: 0;
-    font-size: 1.2em;
+    font-size: 1em;
     color: #9f9f9f;
 }
 
 .incoming-call {
-    position: fixed; /* Fixed position relative to the viewport */
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Adjust for the element's own size */
-    /* Add additional styling as needed */
-    z-index: 1000; /* Ensure it's above other elements */
-    /* Optionally add a background, padding, etc., to make it stand out */
-    background: #fff; /* Example background */
-    padding: 20px; /* Example padding */
-    border-radius: 8px; /* Example border styling */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Example shadow for visibility */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background overlay */
 }
 
-
-.sessions {
-    width: 13.2rem;
-    max-height: 20rem;
-    overflow-y: auto;
+.callpopup-wrapper {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
 }
+
 
 .chat-session {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-height: 30rem;
-    width: 20rem;
+    width: 18rem;
+}
+
+.no-session {
+    position: absolute; /* Position the message absolutely within the container */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center the message */
+    background-color: #252525;
+    border-radius: 4px;
+    color: #fff;
+    padding: 10px 20px;
+    width: 8.5rem;
+    opacity: .6;
+    text-align: center;
 }
 
 .chat-messages {
@@ -169,58 +180,108 @@ video {
     padding: 10px;
 }
 
-.chat-input {
+.input-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.input {
+    width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    background-color: #c5c5c5;
-    width: 90%;
+    margin-bottom: 10px;
+    box-sizing: border-box; /* Add box-sizing property */
+    background-color: #e0e0e0;
+}
+
+.action-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box; /* Add box-sizing property */
+    cursor: pointer;
+}
+
+.action-button:hover {
+    background-color: #0056b3;
 }
 
 .default-col {
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
 }
 
-.chat-button {
+
+.info {
+    background-color: #a14747;
+    padding: 1rem;
+    border-radius: .5rem;
+    text-align: center;
+    width: 14.3rem;
+    min-height: 10rem; /* Set a max height to allow shrinking */
+    max-height: 16rem; /* Set a max height to allow shrinking */
+    overflow: auto; /* Enable vertical scroll if content exceeds the height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    justify-content: space-between;
+}
+
+
+.overflow-breakword {
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.call-button {
     width: 100%;
-    background-color: #007bff;
+    background-color: #669d23;
     color: white;
     padding: 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: .9rem;
 }
 
-.chat-button:hover {
-    background-color: #0056b3;
+.disabled {
+    position: relative; /* Add a relative position to the element */
+    pointer-events: none;
 }
 
-.call-button {
-    max-width: 12rem;
-    background-color: #669d23;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    margin: 10px;
-    cursor: pointer;
-    font-size: .7rem
+.disabled::before {
+    border-radius: .5rem;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(128, 128, 128, 0.5); /* Apply a gray overlay */
+    z-index: 1; /* Ensure the overlay is above the content */
 }
 
 .call-button:hover {
     background-color: #4b731a;
 }
 
-.login-button{
+.login-button {
     cursor: pointer;
 }
 
-.logout-button{
+.logout-button {
     cursor: pointer;
 }
 
@@ -236,18 +297,11 @@ video {
     overflow-wrap: break-word;
 }
 
-.info{
-    background-color: #a14747;
-    padding: 1rem;
-    border-radius: .5rem;
-    text-align: center;
-}
-
-.bold{
+.bold {
     font-weight: bold;
 }
 
 
-.underlined{
+.underlined {
     text-decoration: underline;
 }

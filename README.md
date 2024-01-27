@@ -10,8 +10,9 @@ and Solid Project authentication. This app serves as a demonstration and open-so
 implementation of Solid Project methodologies and Solid POD storage. The vision is to shape the future of the web into a
 more user-centric platform. This application is built with React and utilizes @inrupt/solid packages for essential
 authentication logic while trying to keep the code as simple as possible and trying to keep the dependencies to a
-minimum. The implementation of Solid authentication and the usage of pod storage write/read is done in the - what I found to
-be - best, most practical and adaptable way for open-source, contribution and expandability purposes. 
+minimum. The implementation of Solid authentication and the usage of pod storage write/read is done in the - what I
+found to
+be - best, most practical and adaptable way for open-source, contribution and expandability purposes.
 
 ### Table of Contents
 
@@ -41,20 +42,6 @@ npm run build
 npm run dev
 ```
 
-YARN:
-
-```bash
-yarn install
-```
-
-```bash
-yarn build
-```
-
-```bash
-yarn start
-```
-
 2. Run the React application
 
 ```bash
@@ -73,20 +60,6 @@ npm run dev
 
 ```bash
 npm run build
-```
-
-YARN:
-
-```bash
-yarn install
-```
-
-```bash
-yarn start
-```
-
-```bash
-yarn build
 ```
 
 To incorporate this chat application into your project, make sure to install the following dependencies (which should be
