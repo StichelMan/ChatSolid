@@ -7,9 +7,11 @@ a cutting-edge and relatively unexplored topic in web technology. This assignmen
 educational institution located in Ghent, Belgium. This repository hosts a React-based chat application that leverages
 decentralized data management using Solid principles
 and Solid Project authentication. This app serves as a demonstration and open-source tool, encouraging the adoption and
-implementation of Solid Project methodologies and Solid POD storage. Our vision is to shape the future of the web into a
+implementation of Solid Project methodologies and Solid POD storage. The vision is to shape the future of the web into a
 more user-centric platform. This application is built with React and utilizes @inrupt/solid packages for essential
-authentication logic.
+authentication logic while trying to keep the code as simple as possible and trying to keep the dependencies to a
+minimum. The implementation of Solid authentication and the usage of pod storage write/read is done in the - what I found to
+be - best, most practical and adaptable way for open-source, contribution and expandability purposes. 
 
 ### Table of Contents
 
@@ -19,70 +21,93 @@ authentication logic.
 4. Issues and Community Help
 
 ### Installation
-Depending on your preference, you can use either npm or yarn to install this package. Please change your package.json scripts accordingly and only do so if you know what you are doing.
+
+Depending on your preference, you can use either npm or yarn to install this package. Please change your package.json
+scripts accordingly and only do so if you know what you are doing.
+
 1. Run the Socket.io server for WebRTC communication
 
 NPM:
+
 ```bash
 npm install
 ```
+
 ```bash
 npm run build
 ```
+
 ```bash
 npm run dev
 ```
+
 YARN:
+
 ```bash
 yarn install
 ```
+
 ```bash
 yarn build
 ```
+
 ```bash
 yarn start
 ```
 
 2. Run the React application
+
 ```bash
 cd client
 ```
 
 NPM:
+
 ```bash
 npm install
 ```
+
 ```bash
 npm run dev
 ```
+
 ```bash
 npm run build
 ```
+
 YARN:
+
 ```bash
 yarn install
 ```
+
 ```bash
 yarn start
 ```
+
 ```bash
 yarn build
 ```
 
-To incorporate this chat application into your project, make sure to install the following dependencies (which should be present if you followed the steps above):
+To incorporate this chat application into your project, make sure to install the following dependencies (which should be
+present if you followed the steps above):
+
 ```bash
 npm install -S @inrupt/solid-ui-react
 ```
 
 #### Usage
+
 Import components such as:
+
 ```js
 import {SessionProvider, LoginButton} from "@inrupt/solid-ui-react";
 ```
 
 ### Development Guidelines
 
-All development adheres to Inrupt (and Solid) Coding Guidelines. Our linting and testing tools largely automate this compliance.
+All development adheres to Inrupt (and Solid) Coding Guidelines. Our linting and testing tools largely automate this
+compliance.
 
 #### Getting Started
 
@@ -100,6 +125,7 @@ modules or in browsers with bundlers like Webpack, Rollup, or Parcel.
 This client is part of Inrupt's open-source JavaScript library suite for Solid app development.
 
 ### Issues and Community Help
+
 If you need help or have a question you can contact me at: eli.vanstichelen@student.odisee.be
 
 #### Solid Community Forum
@@ -112,12 +138,18 @@ Public Feedback: File an issue via GitHub.
 Private Feedback or Support: Contact us through the Inrupt Service Desk.
 
 ### Contributing
-The main focus of this project is to provide a solid chat application that can be used by anyone. If you want to contribute to this project, don't hesitate and try it out.
+
+The main focus of this project is to provide a solid chat application that can be used by anyone. If you want to
+contribute to this project, don't hesitate and try it out.
 
 ### Feedback
 
-For feedback, please raise issues in the issue section of the repository. All feedback is welcome!
+For feedback, please raise issues in the issue section of the repository or contact me at:
+eli.vanstichelen@student.odisee.be. All feedback is welcome!
 
 ### License
 
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0). We chose this license to ensure that all modifications and derivatives of this project remain free and open-source. The GPL-3.0 license aligns with our goal of contributing to the community-driven Solid project, ensuring that our work and any extensions of it continue to benefit the open-source ecosystem.
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0). This license is chosen to ensure that all
+modifications and derivatives of this project remain free and open-source. The GPL-3.0 license aligns with the goal of
+contributing to the community-driven Solid project, ensuring that my work and any extensions of it continue to benefit
+the open-source ecosystem.
