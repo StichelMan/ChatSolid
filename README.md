@@ -27,8 +27,7 @@ Depending on your preference, you can use either npm or yarn to install this pac
 scripts accordingly and only do so if you know what you are doing.
 
 1. Run the Socket.io server for WebRTC communication
-
-NPM:
+(Using package manager NPM)
 
 ```bash
 npm install
@@ -47,8 +46,6 @@ npm run dev
 ```bash
 cd client
 ```
-
-NPM:
 
 ```bash
 npm install
