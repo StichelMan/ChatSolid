@@ -21,16 +21,6 @@ authentication logic.
 ### Installation
 Depending on your preference, you can use either npm or yarn to install this package. Please change your package.json scripts accordingly and only do so if you know what you are doing.
 1. Run the Socket.io server for WebRTC communication
-YARN:
-```bash
-yarn install
-```
-```bash
-yarn build
-```
-```bash
-yarn start
-```
 NPM:
 ```bash
 npm install
@@ -40,22 +30,22 @@ npm run build
 ```
 ```bash
 npm run dev
+```
+YARN:
+```bash
+yarn install
+```
+```bash
+yarn build
+```
+```bash
+yarn start
 ```
 
 2. Run the React application
 ```bash
 cd client
 ```
-YARN:
-```bash
-yarn install
-```
-```bash
-yarn start
-```
-```bash
-yarn build
-```
 NPM:
 ```bash
 npm install
@@ -65,6 +55,16 @@ npm run dev
 ```
 ```bash
 npm run build
+```
+YARN:
+```bash
+yarn install
+```
+```bash
+yarn start
+```
+```bash
+yarn build
 ```
 
 To incorporate this chat application into your project, make sure to install the following dependencies (which should be present if you followed the steps above):
