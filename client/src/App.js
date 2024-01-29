@@ -6,11 +6,10 @@ import {SessionProvider, LoginButton, LogoutButton, useSession} from "@inrupt/so
 import {
     getSolidDataset,
     setThing,
-    set,
     saveSolidDatasetAt,
     createThing,
     addStringNoLocale,
-    getStringNoLocale, getThing, createSolidDataset
+    createSolidDataset
 } from "@inrupt/solid-client";
 import {FOAF, SCHEMA_INRUPT} from "@inrupt/vocab-common-rdf";
 const AuthSection = () => {
@@ -186,10 +185,15 @@ function App() {
                 dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId }));
             }
 
+            if (partnerWebId) {
+                dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId, chatHistory: receivedMessages }));
+            }
+
 
             // setPartnerWebId(session?.info?.webId)
             identityChannelRef.current = peer;
             identityChannelRef.current.send(webId);
+            // identityChannelRef.current.send(receivedMessages)
             // Fetch chat history when the connection is established
             // fetchChatHistory(formatWebIdForFilename(partnerWebId)) // Replace 'partnerWebId' with the actual WebID of the partner
             //     .then(history => setReceivedMessages(history));
@@ -252,13 +256,14 @@ function App() {
         peer.on('connect', () => {
             dataChannelRef.current = peer;
             if (session?.info?.isLoggedIn) {
-                dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId }));
+                dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId, chatHistory: receivedMessages})); //dunno what to do with this pfft
             }
 
 
             // setPartnerWebId(session?.info?.webId)
             identityChannelRef.current = peer;
             identityChannelRef.current.send(webId);
+            // identityChannelRef.current.send(receivedMessages)
             // Fetch chat history when the connection is established
             // fetchChatHistory(formatWebIdForFilename(partnerWebId)) // Replace 'partnerWebId' with the actual WebID of the partner
             //     .then(history => setReceivedMessages(history));
@@ -385,6 +390,9 @@ function App() {
             const parsedData = JSON.parse(data);
             if (parsedData.webId) {
                 setPartnerWebId(parsedData.webId);
+            } else if (data.chatHistory){
+                console.log("parsedData.chatHistory:");
+                console.log(data.chatHistory)
             } else {
                 const receivedMessage = data.toString();
                 // Add the received message to the chat history
@@ -478,7 +486,7 @@ function App() {
             if (key === yourID) return null;
             return (
                 <button key={key} className='call-button' onClick={() => callPeer(key)}>
-                    <span key={partnerWebId + '-' + key} className='bold'>Call User</span><br/> {partnerWebId ? partnerWebId : key}
+                    <span key={partnerWebId + '-' + key} className='bold'>Call User</span><br/> {key}
                 </button>
             );
         });
