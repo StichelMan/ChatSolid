@@ -305,3 +305,7 @@ video {
 .underlined {
     text-decoration: underline;
 }
+
+.white{
+    color: #fff;
+}

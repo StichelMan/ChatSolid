@@ -6,14 +6,13 @@ import {SessionProvider, LoginButton, LogoutButton, useSession} from "@inrupt/so
 import {
     getSolidDataset,
     setThing,
-    createSolidDataset,
+    set,
     saveSolidDatasetAt,
     createThing,
     addStringNoLocale,
-    getStringNoLocale, getThing
+    getStringNoLocale, getThing, createSolidDataset
 } from "@inrupt/solid-client";
 import {FOAF, SCHEMA_INRUPT} from "@inrupt/vocab-common-rdf";
-
 const AuthSection = () => {
     const {session} = useSession();
     const webId = session?.info?.webId;
@@ -58,30 +57,28 @@ function App() {
     const [message, setMessage] = useState('');
     const [receivedMessages, setReceivedMessages] = useState([]);
     const [userName, setUserName] = useState('');
+    const [webId, setWebId] = useState('');
+    const [partnerWebId, setPartnerWebId] = useState('');
 
     const userVideo = useRef(null);
     const partnerVideo = useRef(null);
     const socket = useRef(null);
     const peerRef = useRef(null);
     const dataChannelRef = useRef(null);
+    const identityChannelRef = useRef(null);
 
     useEffect(() => {
+        if (partnerWebId && webId){
+            fetchChatHistory(partnerWebId) // Replace 'partnerWebId' with the actual WebID of the partner
+                .then(history => setReceivedMessages(history));
+        }
+
+    }, [partnerWebId]);
+
+    useEffect(() => {
+        setWebId(session?.info?.webId)
         setupSocketConnection();
-    }, [session?.info?.isLoggedIn, session?.info?.webId, session]);
-
-    const setupSocketConnection = () => {
-        socket.current = io.connect("/");
-        socket.current.on("yourID", (id) => {
-            const identifier = id;
-            setYourID(identifier);
-            socket.current.emit('identifyUser', identifier);
-        });
-
-        socket.current.on("allUsers", (users) => {
-            setUsers(users);
-            console.log("All Users: ", users);
-        });
-    };
+    }, []);
 
     useEffect(() => {
         socket.current = io.connect("/");
@@ -121,10 +118,32 @@ function App() {
         };
     }, []);
 
+    useEffect(() => {
+        setWebId(session?.info?.webId)
+        // Send the authenticated WebID to other users when available
+        if (session?.info?.isLoggedIn) {
+            const identifier = session?.info?.webId;
+            if (socket.current && identifier) {
+                socket.current.emit('sendWebID', {id: yourID, webId: identifier});
+            }
+        }
+    }, [session?.info?.isLoggedIn, yourID]);
+
+    const setupSocketConnection = () => {
+        socket.current = io.connect("/");
+        socket.current.on("yourID", (id) => {
+            setYourID(id); // Use session ID as primary identifier
+            socket.current.emit('identifyUser', id);
+        });
+
+        socket.current.on("allUsers", (users) => {
+            setUsers(users);
+        });
+    };
+
     const handleSetUserName = () => {
         if (!userName) return;
-        const identifier = session?.info?.isLoggedIn ? session?.info?.webId : yourID;
-        socket.current.emit('setUserInfo', {id: identifier, name: userName});
+        socket.current.emit('setUserInfo', {id: yourID, name: userName}); // Use session ID
     };
 
     const endCall = () => {
@@ -161,9 +180,19 @@ function App() {
             }
         });
 
-        // Create a data channel
         peer.on('connect', () => {
             dataChannelRef.current = peer;
+            if (session?.info?.isLoggedIn) {
+                dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId }));
+            }
+
+
+            // setPartnerWebId(session?.info?.webId)
+            identityChannelRef.current = peer;
+            identityChannelRef.current.send(webId);
+            // Fetch chat history when the connection is established
+            // fetchChatHistory(formatWebIdForFilename(partnerWebId)) // Replace 'partnerWebId' with the actual WebID of the partner
+            //     .then(history => setReceivedMessages(history));
         });
 
         // Handle incoming messages
@@ -199,7 +228,6 @@ function App() {
     }
 
     function acceptCall() {
-        // Clean up any existing peer connection
         if (peerRef.current) {
             peerRef.current.destroy();
             peerRef.current = null;
@@ -221,9 +249,19 @@ function App() {
             }
         });
 
-        // Create a data channel
         peer.on('connect', () => {
             dataChannelRef.current = peer;
+            if (session?.info?.isLoggedIn) {
+                dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId }));
+            }
+
+
+            // setPartnerWebId(session?.info?.webId)
+            identityChannelRef.current = peer;
+            identityChannelRef.current.send(webId);
+            // Fetch chat history when the connection is established
+            // fetchChatHistory(formatWebIdForFilename(partnerWebId)) // Replace 'partnerWebId' with the actual WebID of the partner
+            //     .then(history => setReceivedMessages(history));
         });
 
         // Handle incoming messages
@@ -249,85 +287,117 @@ function App() {
         peerRef.current = peer;
     }
 
-    const CHAT_FILE_PATH = "/ChatSolid/chats/messages.ttl";
+    const fetchChatHistory = async (partnerWebId) => {
+        console.log("partnerWebId:", partnerWebId); // Add this to log and check the value
 
-    // Function to save a message to the user's Solid pod
-    const saveMessageToPod = async (message, isOutgoing) => {
-        if (!session.info.isLoggedIn) return;
-        const storageUrl = new URL(CHAT_FILE_PATH, session.info.webId).toString();
+        // // Validate if partnerWebId is a valid URL
+        // if (!partnerWebId || !isValidHttpUrl(partnerWebId)) {
+        //     console.error("Invalid partnerWebId:", partnerWebId);
+        //     return []; // Return empty array if invalid
+        // }
+
+        const safePartnerWebId = formatWebIdForFilename(partnerWebId);
+        const storageUrl = new URL(`/ChatSolid/chats/${safePartnerWebId}.ttl`, session.info.webId).toString();
 
         try {
-            let dataset;
-            try {
-                dataset = await getSolidDataset(storageUrl, {fetch: session.fetch});
-            } catch (error) {
-                // If the dataset does not exist, create a new one
-                dataset = createSolidDataset();
-            }
+            const dataset = await getSolidDataset(storageUrl, { fetch: session.fetch });
+            console.log('Chat history found');
+            return processChatHistory(dataset);
+        } catch (error) {
+            console.log('No chat history found', error);
+            return []; // Return an empty array if no history is found
+        }
+    };
 
-            const newMessageThing = createThing({name: `message-${new Date().toISOString()}`});
-            const updatedMessageThing = addStringNoLocale(
-                newMessageThing, FOAF.name, `${isOutgoing ? "You" : "Other"}: ${message}`
-            );
 
-            const updatedDataset = setThing(dataset, updatedMessageThing);
-            await saveSolidDatasetAt(storageUrl, updatedDataset, {fetch: session.fetch});
+    const processChatHistory = (dataset) => {
+        const messages = dataset.graphs.default;
+        return Object.entries(messages).map(([url, messageEntry]) => {
+            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/name'].literals['http://www.w3.org/2001/XMLSchema#string'][0];
+            const timestamp = url.split("#message-")[1];
+            return `Date: ${timestamp}, Message: ${messageText}`;
+        });
+    };
+
+    function logChatMessages(dataset) {
+        const messages = dataset.graphs.default;
+        Object.entries(messages).forEach(([url, messageEntry]) => {
+            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/name'].literals['http://www.w3.org/2001/XMLSchema#string'][0];
+
+            // Extracting the timestamp from the URL
+            const timestamp = url.split("#message-")[1];
+
+            console.log(`Date: ${timestamp}, Message: ${messageText}`);
+        });
+    }
+    // Function to save a message to the user's Solid pod
+    // Function to replace special URL characters with underscores
+    const formatWebIdForFilename = (webId) => {
+        // Remove the protocol part
+        let simplified = webId.replace(/^https?:\/\//, '');
+
+        // Replace special characters with an underscore or a dash
+        simplified = simplified.replace(/[\/:]/g, '_');
+
+        return simplified;
+    };
+
+// Function to save a message to the user's Solid pod
+    const saveMessageToPod = async (message, recipientWebId) => {
+        if (!session.info.isLoggedIn || !recipientWebId) return;
+
+        // Format the WebID to be safe for use as a filename
+        const safeRecipientWebId = formatWebIdForFilename(recipientWebId);
+        const storageUrl = new URL(`/ChatSolid/chats/${safeRecipientWebId}.ttl`, session.info.webId).toString();
+
+        let dataset;
+        try {
+            dataset = await getSolidDataset(storageUrl, { fetch: session.fetch });
+            console.log('Chat history found');
+        } catch (error) {
+            console.log('No chat history found, creating new dataset');
+            dataset = createSolidDataset();
+        }
+
+        const newMessageThing = createThing({ name: `message-${new Date().toISOString()}` });
+        const updatedMessageThing = addStringNoLocale(newMessageThing, FOAF.name, message);
+        dataset = setThing(dataset, updatedMessageThing);
+
+        try {
+            await saveSolidDatasetAt(storageUrl, dataset, { fetch: session.fetch });
         } catch (error) {
             console.error("Error saving message to Solid pod:", error);
         }
     };
 
+
     const sendMessage = () => {
+        setReceivedMessages(oldMsgs => [...oldMsgs, `You: ${message}`]);
         if (dataChannelRef.current && message !== "") {
             dataChannelRef.current.send(message);
-            setReceivedMessages(oldMsgs => [...oldMsgs, `You: ${message}`]);
-            saveMessageToPod(message, true); // Save the outgoing message
+            saveMessageToPod(message, formatWebIdForFilename(partnerWebId)); // Assuming partnerWebId is the WebID of the chat partner
             setMessage("");
         }
     };
 
     const handleMessageReceive = (data) => {
-        const receivedMessage = data.toString();
-        setReceivedMessages(oldMsgs => [...oldMsgs, receivedMessage]);
-        saveMessageToPod(receivedMessage, false); // Save the incoming message
+        try {
+            const parsedData = JSON.parse(data);
+            if (parsedData.webId) {
+                setPartnerWebId(parsedData.webId);
+            } else {
+                const receivedMessage = data.toString();
+                // Add the received message to the chat history
+                setReceivedMessages(oldMsgs => [...oldMsgs, receivedMessage]);
+            }
+        } catch (e) {
+            // It's a regular message, not JSON
+            setReceivedMessages(oldMsgs => [...oldMsgs, data.toString()]);
+        }
     };
 
 
-    async function saveChatToPod(webID, chatContent) {
-        const podUrl = new URL(CHAT_FILE_PATH, webID).href;
-        let chatDataset;
-        try {
-            chatDataset = await getSolidDataset(podUrl, {fetch: fetch});
-        } catch (error) {
-            if (error.statusCode === 404) {
-                chatDataset = createSolidDataset();
-            } else {
-                throw error;
-            }
-        }
 
-        let chatThing = createThing({name: "chat"});
-        chatThing = addStringNoLocale(chatThing, SCHEMA_INRUPT.text, JSON.stringify(chatContent));
-        chatDataset = setThing(chatDataset, chatThing);
-
-        await saveSolidDatasetAt(podUrl, chatDataset, {fetch: fetch});
-    }
-
-    async function fetchChatFromPod(webID) {
-        const podUrl = new URL(CHAT_FILE_PATH, webID).href;
-        try {
-            const chatDataset = await getSolidDataset(podUrl, {fetch: fetch});
-            const chatThing = getThing(chatDataset, `${podUrl}#chat`);
-            const chatContent = getStringNoLocale(chatThing, SCHEMA_INRUPT.text);
-            return JSON.parse(chatContent);
-        } catch (error) {
-            if (error.statusCode === 404) {
-                return []; // Return an empty array if chat file doesn't exist
-            } else {
-                throw error;
-            }
-        }
-    }
 
     let UserVideo;
     if (stream) {
@@ -393,16 +463,6 @@ function App() {
         };
     }, [yourID]);
 
-    useEffect(() => {
-        // Send the authenticated WebID to other users when available
-        if (session?.info?.isLoggedIn) {
-            const identifier = session?.info?.webId;
-            if (socket.current && identifier) {
-                socket.current.emit('sendWebID', {id: yourID, webId: identifier});
-            }
-        }
-    }, [session?.info?.isLoggedIn, yourID]);
-
     // Update the renderCallButtons function
     const renderCallButtons = () => {
         if (Object.keys(users).length <= 1) return (<p>No other users online</p>);
@@ -418,7 +478,7 @@ function App() {
             if (key === yourID) return null;
             return (
                 <button key={key} className='call-button' onClick={() => callPeer(key)}>
-                    <span className='bold'>Call User</span><br/> {key}
+                    <span key={partnerWebId + '-' + key} className='bold'>Call User</span><br/> {partnerWebId ? partnerWebId : key}
                 </button>
             );
         });
@@ -432,21 +492,26 @@ function App() {
                     <p className="subtitle">By Eli Van Stichelen</p>
                 </div>
                 <div className="video-group">
-                    {/*{stream && session?.info?.isLoggedIn && <p>WebID: {yourID}</p>}*/}
-                    <div className="user-video video-wrapper">
-                        {UserVideo}
-                        {/*{callAccepted ? UserVideo : ''}*/}
-                        <p className="user-label">Me</p>
+                    <div className="default-col">
+                        <span className='white'>{stream && session?.info?.isLoggedIn && <p>WebID: {webId}</p>}</span>
+                        <div className="user-video video-wrapper">
+                            {UserVideo}
+                            {/*{callAccepted ? UserVideo : ''}*/}
+                            <p className="user-label">Me</p>
+                        </div>
                     </div>
-                    {/*{stream && session?.info?.isLoggedIn && <p>WebID: {yourID}</p>}*/}
-                    <div className={"partner-video video-wrapper" + (!callAccepted ? " disabled" : "")}>
-                        {PartnerVideo}
-                        <p className="user-label">Other user</p>
-                        {!callAccepted && (
-                            <div className="no-session">
-                                No current session
-                            </div>
-                        )}
+                    <div className="default-col">
+                        <span className='white'>{stream && session?.info?.isLoggedIn &&
+                            <p>WebID: {partnerWebId}</p>}</span>
+                        <div className={"partner-video video-wrapper" + (!callAccepted ? " disabled" : "")}>
+                            {PartnerVideo}
+                            <p className="user-label">Other user</p>
+                            {!callAccepted && (
+                                <div className="no-session">
+                                    No current session
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
                 <div className='dashboard-row'>
@@ -457,7 +522,7 @@ function App() {
                         <div className="title-section chat-title">
                             <h2>Solid Chat</h2>
                         </div>
-                        <div className="chat-messages">
+                        <div className="chat-messages" key={partnerWebId}>
                             {receivedMessages.map((msg, index) => (
                                 <p key={index}>{msg}</p>
                             ))}
