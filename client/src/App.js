@@ -11,7 +11,7 @@ import {
     addStringNoLocale,
     createSolidDataset
 } from "@inrupt/solid-client";
-import {FOAF, SCHEMA_INRUPT} from "@inrupt/vocab-common-rdf";
+import {FOAF} from "@inrupt/vocab-common-rdf";
 const AuthSection = () => {
     const {session} = useSession();
     const webId = session?.info?.webId;
@@ -188,7 +188,6 @@ function App() {
             if (partnerWebId) {
                 dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId, chatHistory: receivedMessages }));
             }
-
 
             // setPartnerWebId(session?.info?.webId)
             identityChannelRef.current = peer;
