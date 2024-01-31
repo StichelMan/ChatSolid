@@ -12,6 +12,7 @@ import {
     createSolidDataset
 } from "@inrupt/solid-client";
 import {FOAF} from "@inrupt/vocab-common-rdf";
+
 const AuthSection = () => {
     const {session} = useSession();
     const webId = session?.info?.webId;
@@ -58,6 +59,7 @@ function App() {
     const [userName, setUserName] = useState('');
     const [webId, setWebId] = useState('');
     const [partnerWebId, setPartnerWebId] = useState('');
+    const [chatHistory, setChatHistory] = useState([]);
 
     const userVideo = useRef(null);
     const partnerVideo = useRef(null);
@@ -67,12 +69,26 @@ function App() {
     const identityChannelRef = useRef(null);
 
     useEffect(() => {
-        if (partnerWebId && webId){
-            fetchChatHistory(partnerWebId) // Replace 'partnerWebId' with the actual WebID of the partner
-                .then(history => setReceivedMessages(history));
-        }
+        if (partnerWebId && webId) {
+            fetchChatHistory(partnerWebId)
+                .then((history) => {
+                    setReceivedMessages(history);
+                    setChatHistory(history);
 
+                    // Send the chat history to User B (partner) over the data channel
+                    if (dataChannelRef.current) {
+                        dataChannelRef.current.send(JSON.stringify({ chatHistory: history }));
+                    }
+                });
+        }
     }, [partnerWebId]);
+
+
+    useEffect(() => {
+        console.log("chatHistory from useeffect:", chatHistory);
+        // setReceivedMessages(oldMsgs => [...oldMsgs, `You: ${message}`]);
+    }, [chatHistory]);
+
 
     useEffect(() => {
         setWebId(session?.info?.webId)
@@ -119,14 +135,8 @@ function App() {
 
     useEffect(() => {
         setWebId(session?.info?.webId)
-        // Send the authenticated WebID to other users when available
-        if (session?.info?.isLoggedIn) {
-            const identifier = session?.info?.webId;
-            if (socket.current && identifier) {
-                socket.current.emit('sendWebID', {id: yourID, webId: identifier});
-            }
-        }
     }, [session?.info?.isLoggedIn, yourID]);
+
 
     const setupSocketConnection = () => {
         socket.current = io.connect("/");
@@ -182,16 +192,21 @@ function App() {
         peer.on('connect', () => {
             dataChannelRef.current = peer;
             if (session?.info?.isLoggedIn) {
-                dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId }));
+                dataChannelRef.current.send(JSON.stringify({webId: session.info.webId}));
             }
 
-            if (partnerWebId) {
-                dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId, chatHistory: receivedMessages }));
-            }
+            // if (partnerChatHistory.length > 0) {
+            //     dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId, chatHistory: partnerChatHistory }));
+            // }
 
             // setPartnerWebId(session?.info?.webId)
             identityChannelRef.current = peer;
             identityChannelRef.current.send(webId);
+
+            if (chatHistory.length > 0) {
+                dataChannelRef.current.send(JSON.stringify({chatHistory: chatHistory}));
+            }
+            dataChannelRef.current.send(JSON.stringify({chatHistory: chatHistory}));
             // identityChannelRef.current.send(receivedMessages)
             // Fetch chat history when the connection is established
             // fetchChatHistory(formatWebIdForFilename(partnerWebId)) // Replace 'partnerWebId' with the actual WebID of the partner
@@ -252,16 +267,25 @@ function App() {
             }
         });
 
+
         peer.on('connect', () => {
             dataChannelRef.current = peer;
             if (session?.info?.isLoggedIn) {
-                dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId, chatHistory: receivedMessages})); //dunno what to do with this pfft
+                dataChannelRef.current.send(JSON.stringify({webId: session.info.webId}));
             }
 
+            // if (partnerChatHistory.length > 0) {
+            //     dataChannelRef.current.send(JSON.stringify({ webId: session.info.webId, chatHistory: partnerChatHistory }));
+            // }
 
             // setPartnerWebId(session?.info?.webId)
             identityChannelRef.current = peer;
             identityChannelRef.current.send(webId);
+
+            if (chatHistory.length > 0) {
+                dataChannelRef.current.send(JSON.stringify({chatHistory: chatHistory}));
+            }
+            dataChannelRef.current.send(JSON.stringify({chatHistory: chatHistory}));
             // identityChannelRef.current.send(receivedMessages)
             // Fetch chat history when the connection is established
             // fetchChatHistory(formatWebIdForFilename(partnerWebId)) // Replace 'partnerWebId' with the actual WebID of the partner
@@ -272,7 +296,9 @@ function App() {
         peer.on('data', handleMessageReceive);
 
         peer.on("stream", stream => {
-            partnerVideo.current.srcObject = stream;
+            if (partnerVideo.current) {
+                partnerVideo.current.srcObject = stream;
+            }
         });
 
         peer.on('close', () => {
@@ -304,7 +330,7 @@ function App() {
         const storageUrl = new URL(`/ChatSolid/chats/${safePartnerWebId}.ttl`, session.info.webId).toString();
 
         try {
-            const dataset = await getSolidDataset(storageUrl, { fetch: session.fetch });
+            const dataset = await getSolidDataset(storageUrl, {fetch: session.fetch});
             console.log('Chat history found');
             return processChatHistory(dataset);
         } catch (error) {
@@ -318,10 +344,11 @@ function App() {
         const messages = dataset.graphs.default;
         return Object.entries(messages).map(([url, messageEntry]) => {
             const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/name'].literals['http://www.w3.org/2001/XMLSchema#string'][0];
-            const timestamp = url.split("#message-")[1];
-            return `Date: ${timestamp}, Message: ${messageText}`;
+            const timestamp = new Date(url.split("#message-")[1]);
+            return { timestamp, message: messageText };
         });
     };
+
 
     function logChatMessages(dataset) {
         const messages = dataset.graphs.default;
@@ -334,6 +361,7 @@ function App() {
             console.log(`Date: ${timestamp}, Message: ${messageText}`);
         });
     }
+
     // Function to save a message to the user's Solid pod
     // Function to replace special URL characters with underscores
     const formatWebIdForFilename = (webId) => {
@@ -346,7 +374,7 @@ function App() {
         return simplified;
     };
 
-// Function to save a message to the user's Solid pod
+    // Function to save a message to the user's Solid pod
     const saveMessageToPod = async (message, recipientWebId) => {
         if (!session.info.isLoggedIn || !recipientWebId) return;
 
@@ -356,19 +384,19 @@ function App() {
 
         let dataset;
         try {
-            dataset = await getSolidDataset(storageUrl, { fetch: session.fetch });
+            dataset = await getSolidDataset(storageUrl, {fetch: session.fetch});
             console.log('Chat history found');
         } catch (error) {
             console.log('No chat history found, creating new dataset');
             dataset = createSolidDataset();
         }
 
-        const newMessageThing = createThing({ name: `message-${new Date().toISOString()}` });
+        const newMessageThing = createThing({name: `message-${new Date().toISOString()}`});
         const updatedMessageThing = addStringNoLocale(newMessageThing, FOAF.name, message);
         dataset = setThing(dataset, updatedMessageThing);
 
         try {
-            await saveSolidDatasetAt(storageUrl, dataset, { fetch: session.fetch });
+            await saveSolidDatasetAt(storageUrl, dataset, {fetch: session.fetch});
         } catch (error) {
             console.error("Error saving message to Solid pod:", error);
         }
@@ -376,7 +404,8 @@ function App() {
 
 
     const sendMessage = () => {
-        setReceivedMessages(oldMsgs => [...oldMsgs, `You: ${message}`]);
+        const newMessage = { timestamp: new Date(), message: `You: ${message}` };
+        setReceivedMessages(oldMsgs => [...oldMsgs, newMessage]);
         if (dataChannelRef.current && message !== "") {
             dataChannelRef.current.send(message);
             saveMessageToPod(message, formatWebIdForFilename(partnerWebId)); // Assuming partnerWebId is the WebID of the chat partner
@@ -384,27 +413,30 @@ function App() {
         }
     };
 
+
     const handleMessageReceive = (data) => {
         try {
+            // Attempt to parse received data as JSON
             const parsedData = JSON.parse(data);
+
             if (parsedData.webId) {
                 setPartnerWebId(parsedData.webId);
-            } else if (data.chatHistory){
-                console.log("parsedData.chatHistory:");
-                console.log(data.chatHistory)
-            } else {
-                const receivedMessage = data.toString();
-                // Add the received message to the chat history
-                setReceivedMessages(oldMsgs => [...oldMsgs, receivedMessage]);
+            } else if (parsedData.chatHistory) {
+                // const mergedHistory = mergeHistories(receivedMessages, parsedData.chatHistory);
+                setReceivedMessages(receivedMessages => [...receivedMessages, ...parsedData.chatHistory]);
             }
         } catch (e) {
-            // It's a regular message, not JSON
-            setReceivedMessages(oldMsgs => [...oldMsgs, data.toString()]);
+            // If parsing fails, treat it as a regular message
+            const receivedMessage = data.toString();
+            setReceivedMessages(oldMsgs => [...oldMsgs, { timestamp: new Date(), message: `Partner: ${receivedMessage}` }]);
         }
     };
 
 
-
+    // const mergeHistories = (history1, history2) => {
+    //     const combinedHistory = [...history1, ...history2];
+    //     return combinedHistory.sort((a, b) => a.timestamp - b.timestamp);
+    // };
 
     let UserVideo;
     if (stream) {
@@ -473,14 +505,14 @@ function App() {
     // Update the renderCallButtons function
     const renderCallButtons = () => {
         if (Object.keys(users).length <= 1) return (<p>No other users online</p>);
-        if (receivingCall || callAccepted || sendingRequest) return (
-            <>
-                <p>{!callAccepted ? callStatus : 'Connected'}</p>
-                <button className='action-button' onClick={() => endCall()}>
-                    <span className='bold'>Disconnect</span>
-                </button>
-            </>
-        );
+        // if (receivingCall || callAccepted || sendingRequest) return (
+        //     <>
+        //         <p>{!callAccepted ? callStatus : 'Connected'}</p>
+        //         <button className='action-button' onClick={() => endCall()}>
+        //             <span className='bold'>Disconnect</span>
+        //         </button>
+        //     </>
+        // );
         return Object.keys(users).map(key => {
             if (key === yourID) return null;
             return (
@@ -530,10 +562,11 @@ function App() {
                             <h2>Solid Chat</h2>
                         </div>
                         <div className="chat-messages" key={partnerWebId}>
-                            {receivedMessages.map((msg, index) => (
-                                <p key={index}>{msg}</p>
+                            {receivedMessages.map((msgObj, index) => (
+                                <p key={index}>{`Date: ${msgObj.timestamp.toLocaleString()}, Message: ${msgObj.message}`}</p>
                             ))}
                         </div>
+
                         <div className="input-actions">
                             <input
                                 className="input"
