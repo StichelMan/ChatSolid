@@ -59,8 +59,7 @@ function App() {
     const [userName, setUserName] = useState('');
     const [webId, setWebId] = useState('');
     const [partnerWebId, setPartnerWebId] = useState('');
-    const [chatHistory, setChatHistory] = useState([]);
-
+    const chatHistoryRef = useRef([])
     const userVideo = useRef(null);
     const partnerVideo = useRef(null);
     const socket = useRef(null);
@@ -72,8 +71,9 @@ function App() {
         if (partnerWebId && webId) {
             fetchChatHistory(partnerWebId)
                 .then((history) => {
+                    //alert("hannle")
                     setReceivedMessages(history);
-                    setChatHistory(history);
+                    chatHistoryRef.current = history
 
                     // Send the chat history to User B (partner) over the data channel
                     if (dataChannelRef.current) {
@@ -83,11 +83,6 @@ function App() {
         }
     }, [partnerWebId]);
 
-
-    useEffect(() => {
-        console.log("chatHistory from useeffect:", chatHistory);
-        // setReceivedMessages(oldMsgs => [...oldMsgs, `You: ${message}`]);
-    }, [chatHistory]);
 
 
     useEffect(() => {
@@ -168,7 +163,12 @@ function App() {
     };
 
 
-    function callPeer(id) {
+    async function callPeer(id) {
+        const chatHistory = chatHistoryRef.current;
+        // while (chatHistory === null){
+        //     await new Promise((resolve) => setTimeout(resolve, 500));
+        //     console.log("ik als in de man wacht")
+        // }
         if (peerRef.current) {
             peerRef.current.destroy();
             peerRef.current = null;
@@ -203,7 +203,8 @@ function App() {
             identityChannelRef.current = peer;
             identityChannelRef.current.send(webId);
 
-            if (chatHistory.length > 0) {
+            const chatHistory = chatHistoryRef.current;
+            if (chatHistoryRef.current.length > 0) {
                 dataChannelRef.current.send(JSON.stringify({chatHistory: chatHistory}));
             }
             dataChannelRef.current.send(JSON.stringify({chatHistory: chatHistory}));
@@ -282,6 +283,8 @@ function App() {
             identityChannelRef.current = peer;
             identityChannelRef.current.send(webId);
 
+            const chatHistory = chatHistoryRef.current;
+
             if (chatHistory.length > 0) {
                 dataChannelRef.current.send(JSON.stringify({chatHistory: chatHistory}));
             }
@@ -343,7 +346,7 @@ function App() {
     const processChatHistory = (dataset) => {
         const messages = dataset.graphs.default;
         return Object.entries(messages).map(([url, messageEntry]) => {
-            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/name'].literals['http://www.w3.org/2001/XMLSchema#string'][0];
+            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/message'].literals['http://www.w3.org/2001/XMLSchema#string'][0];
             const timestamp = new Date(url.split("#message-")[1]);
             return { timestamp, message: messageText };
         });
@@ -353,7 +356,7 @@ function App() {
     function logChatMessages(dataset) {
         const messages = dataset.graphs.default;
         Object.entries(messages).forEach(([url, messageEntry]) => {
-            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/name'].literals['http://www.w3.org/2001/XMLSchema#string'][0];
+            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/message'].literals['http://www.w3.org/2001/XMLSchema#string'][0];
 
             // Extracting the timestamp from the URL
             const timestamp = url.split("#message-")[1];
@@ -505,14 +508,14 @@ function App() {
     // Update the renderCallButtons function
     const renderCallButtons = () => {
         if (Object.keys(users).length <= 1) return (<p>No other users online</p>);
-        // if (receivingCall || callAccepted || sendingRequest) return (
-        //     <>
-        //         <p>{!callAccepted ? callStatus : 'Connected'}</p>
-        //         <button className='action-button' onClick={() => endCall()}>
-        //             <span className='bold'>Disconnect</span>
-        //         </button>
-        //     </>
-        // );
+        if (receivingCall || callAccepted || sendingRequest) return (
+            <>
+                <p>{!callAccepted ? callStatus : 'Connected'}</p>
+                <button className='action-button' onClick={() => endCall()}>
+                    <span className='bold'>Disconnect</span>
+                </button>
+            </>
+        );
         return Object.keys(users).map(key => {
             if (key === yourID) return null;
             return (

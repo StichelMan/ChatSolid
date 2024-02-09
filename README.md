@@ -14,6 +14,112 @@ minimum. The implementation of Solid authentication and the usage of pod storage
 found to
 be - best, most practical and adaptable way for open-source, contribution and expandability purposes.
 
+### Features
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>README - Features</title>
+<style>
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .container > div {
+    flex: 0 0 calc(50% - 10px); /* Adjust the width as needed */
+    margin-bottom: 20px;
+  }
+  .container > div > img {
+    max-width: 550px;
+    height: auto;
+min-height: 400px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div>
+
+#### (Landing) Not connected - View:
+The green buttons represent the (other than yourself) available peer's which can be "called" on press.
+
+  <img alt="not-connected_view screenshot" src="./app_screenshots/not-connected_view.png"/>
+</div>
+
+<div>
+
+#### Authenticated and connected - View:
+An established peer to peer connection where both user's are authenticated using their WebID the chatbox will display the chat history if both authenticated user's have previously chatted with each other. The chat history is stored in the peer's Solid POD storage but each user only stores their own sent messages and can only be merged together upon a successful connection within this, and only this, application.
+
+  <img alt="authenticated-and-connected_view screenshot" src="./app_screenshots/authenticated-and-connected_view.png"/>
+</div>
+
+<div>
+
+#### Authenticated with WebID - View:
+The user is authenticated using their WebID and can now call other users.
+
+  <img alt="authenticated-webid_view screenshot" src="./app_screenshots/authenticated-webid_view.png"/> 
+</div>
+
+<div>
+
+#### Calling peer user - View:
+Calling another peer will disable the ability to start another connection until the call is either accepted or rejected.
+
+  <img alt="calling_view screenshot" src="./app_screenshots/calling_view.png"/>
+</div>
+
+<div>
+
+#### Recieving call - View
+The user is being called by another peer and can either accept or reject the call.
+
+  <img alt="recieving_call_view screenshot" src="./app_screenshots/recieving_call_view.png"/>
+</div>
+
+<div>
+
+#### Solid pod browser 'Chat Solid' folder:
+The folder in which the chat files are stored in the user's Solid POD storage.
+
+  <img alt="inrupt-podbrowser-Chat-Solid-folder_view screenshot" src="./app_screenshots/inrupt-podbrowser-Chat-Solid-folder_view.png"/>
+</div>
+
+<div>
+
+#### Solid pod browser 'Chat Solid' folder's peer chat file (this file is named after the peer user's WebID):
+The file in which the chat history is stored in the user's Solid POD storage. This file is named after the peer user's WebID to ensure that each user has a unique file for each peer user and as an indicator for who the chat history (containing only the pod's owner's messages) belongs/contributes to.
+
+  <img alt="inrupt-podbrowser-folder_view screenshot" src="./app_screenshots/inrupt-podbrowser-folder_view.png"/> 
+</div>
+
+<div>
+
+#### Responsive mobile chat - View:
+For mobile devices the chat view is optimized to fit the screen and provide a good user experience. This is mainly done for development purposes as all information is displayed on the same view.
+
+  <img alt="mobile-chat_view screenshot" src="./app_screenshots/mobile-chat_view.png"/>
+</div>
+
+<div>
+
+#### Responsive mobile video - View:
+For mobile devices the video view is optimized to fit the screen and provide a good user experience.
+
+  <img alt="mobile-video_view screenshot" src="./app_screenshots/mobile-video_view.png"/>
+</div>
+
+</div>
+
+</body>
+</html>
+
 ### Table of Contents
 
 1. Installation
@@ -27,7 +133,7 @@ Depending on your preference, you can use either npm or yarn to install this pac
 scripts accordingly and only do so if you know what you are doing.
 
 1. Run the Socket.io server for WebRTC communication
-(Using package manager NPM)
+   (Using package manager NPM)
 
 ```bash
 npm install
