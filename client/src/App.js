@@ -34,7 +34,7 @@ const AuthSection = () => {
                 <div className='login-button'>
                     <LoginButton
                         oidcIssuer="https://inrupt.net"
-                        redirectUrl="http://localhost:3000/chatsolid"
+                        redirectUrl="https://chatsolid.elivanstichelen.com/"
                     >
                         Log In
                     </LoginButton>
