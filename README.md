@@ -71,7 +71,7 @@ Calling another peer will disable the ability to start another connection until 
 
 #### Recieving call - View
 
-The user is being called by another peer and can either accept or reject the call.
+The user is being called by another peer and can now accept the call.
 
   <img alt="recieving_call_view screenshot" src="./app_screenshots/recieving_call_view.png" height="350"/>
 </div>
