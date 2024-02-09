@@ -45,7 +45,8 @@ min-height: 400px;
 
 <div>
 
-#### (Landing) Not connected - View:
+#### Not connected (Landing) - View:
+
 The green buttons represent the (other than yourself) available peer's which can be "called" on press.
 
   <img alt="not-connected_view screenshot" src="./app_screenshots/not-connected_view.png"/>
@@ -54,7 +55,13 @@ The green buttons represent the (other than yourself) available peer's which can
 <div>
 
 #### Authenticated and connected - View:
-An established peer to peer connection where both user's are authenticated using their WebID the chatbox will display the chat history if both authenticated user's have previously chatted with each other. The chat history is stored in the peer's Solid POD storage but each user only stores their own sent messages and can only be merged together upon a successful connection within this, and only this, application.
+
+An established peer to peer connection where both user's are authenticated using their WebID the chatbox will display
+the chat history if both authenticated user's have previously chatted with each other. The chat history is stored in the
+peer's Solid POD storage but each user only stores their own sent messages and can only be merged together upon a
+successful connection within this, and only this, application. Merging the user's chat history is done by the
+application and is only based on the date each message was sent and based on that placed and displayed in their
+respective chronological order.
 
   <img alt="authenticated-and-connected_view screenshot" src="./app_screenshots/authenticated-and-connected_view.png"/>
 </div>
@@ -62,6 +69,7 @@ An established peer to peer connection where both user's are authenticated using
 <div>
 
 #### Authenticated with WebID - View:
+
 The user is authenticated using their WebID and can now call other users.
 
   <img alt="authenticated-webid_view screenshot" src="./app_screenshots/authenticated-webid_view.png"/> 
@@ -70,6 +78,7 @@ The user is authenticated using their WebID and can now call other users.
 <div>
 
 #### Calling peer user - View:
+
 Calling another peer will disable the ability to start another connection until the call is either accepted or rejected.
 
   <img alt="calling_view screenshot" src="./app_screenshots/calling_view.png"/>
@@ -78,6 +87,7 @@ Calling another peer will disable the ability to start another connection until 
 <div>
 
 #### Recieving call - View
+
 The user is being called by another peer and can either accept or reject the call.
 
   <img alt="recieving_call_view screenshot" src="./app_screenshots/recieving_call_view.png"/>
@@ -86,6 +96,7 @@ The user is being called by another peer and can either accept or reject the cal
 <div>
 
 #### Solid pod browser 'Chat Solid' folder:
+
 The folder in which the chat files are stored in the user's Solid POD storage.
 
   <img alt="inrupt-podbrowser-Chat-Solid-folder_view screenshot" src="./app_screenshots/inrupt-podbrowser-Chat-Solid-folder_view.png"/>
@@ -94,7 +105,10 @@ The folder in which the chat files are stored in the user's Solid POD storage.
 <div>
 
 #### Solid pod browser 'Chat Solid' folder's peer chat file (this file is named after the peer user's WebID):
-The file in which the chat history is stored in the user's Solid POD storage. This file is named after the peer user's WebID to ensure that each user has a unique file for each peer user and as an indicator for who the chat history (containing only the pod's owner's messages) belongs/contributes to.
+
+The file in which the chat history is stored in the user's Solid POD storage. This file is named after the peer user's
+WebID to ensure that each user has a unique file for each peer user and as an indicator for who the chat history (
+containing only the pod's owner's messages) belongs/contributes to.
 
   <img alt="inrupt-podbrowser-folder_view screenshot" src="./app_screenshots/inrupt-podbrowser-folder_view.png"/> 
 </div>
@@ -102,7 +116,9 @@ The file in which the chat history is stored in the user's Solid POD storage. Th
 <div>
 
 #### Responsive mobile chat - View:
-For mobile devices the chat view is optimized to fit the screen and provide a good user experience. This is mainly done for development purposes as all information is displayed on the same view.
+
+For mobile devices the chat view is optimized to fit the screen and provide a good user experience. This is mainly done
+for development purposes as all information is displayed on the same view.
 
   <img alt="mobile-chat_view screenshot" src="./app_screenshots/mobile-chat_view.png"/>
 </div>
@@ -110,6 +126,7 @@ For mobile devices the chat view is optimized to fit the screen and provide a go
 <div>
 
 #### Responsive mobile video - View:
+
 For mobile devices the video view is optimized to fit the screen and provide a good user experience.
 
   <img alt="mobile-video_view screenshot" src="./app_screenshots/mobile-video_view.png"/>
@@ -119,6 +136,31 @@ For mobile devices the video view is optimized to fit the screen and provide a g
 
 </body>
 </html>
+
+The messages are stored in the user's Solid POD storage as a file containing relevant information about each message
+using the RDF/JS specification which are the Linked Data principles. Here's an example:
+
+```turtle
+@prefix : <#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+
+<#message-2024-01-30T22:49:03.718Z> foaf:name "Hey! im Eli".
+
+<#message-2024-01-30T22:50:19.660Z> foaf:name "Nice to meet you too!".
+
+<#message-2024-01-30T22:50:59.967Z> foaf:name "No, I am just looking around. Wby?".
+
+<#message-2024-01-30T22:51:27.011Z> foaf:name "LOL!".
+
+<#message-2024-01-30T22:51:58.193Z> foaf:name "That is very cool".
+```  
+
+It's important to note that the current way of storing messages is not the best practice way because Linked Data
+principles are not fully implemented. 
+
+All rules about storing data like messages, in a Solid pod, for chat-related applications can be found on the Solid Project website and
+their github documentation, explained in great detail here: https://solid.github.io/chat/
+
 
 ### Table of Contents
 
