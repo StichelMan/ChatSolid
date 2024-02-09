@@ -24,7 +24,7 @@ be - best, most practical and adaptable way for open-source, contribution and ex
 </head>
 <body>
 
-<div class="container">
+<p float="left">
 
 <div>
 
@@ -32,7 +32,7 @@ be - best, most practical and adaptable way for open-source, contribution and ex
 
 The green buttons represent the (other than yourself) available peer's which can be "called" on press.
 
-  <img alt="not-connected_view screenshot" src="./app_screenshots/not-connected_view.png"/>
+  <img alt="not-connected_view screenshot" src="./app_screenshots/not-connected_view.png" height="350"/>
 </div>
 
 <div>
@@ -46,7 +46,7 @@ successful connection within this, and only this, application. Merging the user'
 application and is only based on the date each message was sent and based on that placed and displayed in their
 respective chronological order.
 
-  <img alt="authenticated-and-connected_view screenshot" src="./app_screenshots/authenticated-and-connected_view.png"/>
+  <img alt="authenticated-and-connected_view screenshot" src="./app_screenshots/authenticated-and-connected_view.png" height="350"/>
 </div>
 
 <div>
@@ -55,7 +55,7 @@ respective chronological order.
 
 The user is authenticated using their WebID and can now call other users.
 
-  <img alt="authenticated-webid_view screenshot" src="./app_screenshots/authenticated-webid_view.png"/> 
+  <img alt="authenticated-webid_view screenshot" src="./app_screenshots/authenticated-webid_view.png" height="350"/> 
 </div>
 
 <div>
@@ -64,7 +64,7 @@ The user is authenticated using their WebID and can now call other users.
 
 Calling another peer will disable the ability to start another connection until the call is either accepted or rejected.
 
-  <img alt="calling_view screenshot" src="./app_screenshots/calling_view.png"/>
+  <img alt="calling_view screenshot" src="./app_screenshots/calling_view.png" height="350"/>
 </div>
 
 <div>
@@ -73,7 +73,7 @@ Calling another peer will disable the ability to start another connection until 
 
 The user is being called by another peer and can either accept or reject the call.
 
-  <img alt="recieving_call_view screenshot" src="./app_screenshots/recieving_call_view.png"/>
+  <img alt="recieving_call_view screenshot" src="./app_screenshots/recieving_call_view.png" height="350"/>
 </div>
 
 <div>
@@ -82,7 +82,7 @@ The user is being called by another peer and can either accept or reject the cal
 
 The folder in which the chat files are stored in the user's Solid POD storage.
 
-  <img alt="inrupt-podbrowser-Chat-Solid-folder_view screenshot" src="./app_screenshots/inrupt-podbrowser-Chat-Solid-folder_view.png"/>
+  <img alt="inrupt-podbrowser-Chat-Solid-folder_view screenshot" src="./app_screenshots/inrupt-podbrowser-Chat-Solid-folder_view.png" height="350"/>
 </div>
 
 <div>
@@ -93,7 +93,7 @@ The file in which the chat history is stored in the user's Solid POD storage. Th
 WebID to ensure that each user has a unique file for each peer user and as an indicator for who the chat history (
 containing only the pod's owner's messages) belongs/contributes to.
 
-  <img alt="inrupt-podbrowser-folder_view screenshot" src="./app_screenshots/inrupt-podbrowser-folder_view.png"/> 
+  <img alt="inrupt-podbrowser-folder_view screenshot" src="./app_screenshots/inrupt-podbrowser-folder_view.png" height="350"/> 
 </div>
 
 <div>
@@ -103,7 +103,7 @@ containing only the pod's owner's messages) belongs/contributes to.
 For mobile devices the chat view is optimized to fit the screen and provide a good user experience. This is mainly done
 for development purposes as all information is displayed on the same view.
 
-  <img alt="mobile-chat_view screenshot" src="./app_screenshots/mobile-chat_view.png"/>
+  <img alt="mobile-chat_view screenshot" src="./app_screenshots/mobile-chat_view.png" height="350"/>
 </div>
 
 <div>
@@ -112,10 +112,10 @@ for development purposes as all information is displayed on the same view.
 
 For mobile devices the video view is optimized to fit the screen and provide a good user experience.
 
-  <img alt="mobile-video_view screenshot" src="./app_screenshots/mobile-video_view.png"/>
+  <img alt="mobile-video_view screenshot" src="./app_screenshots/mobile-video_view.png" height="350"/>
 </div>
 
-</div>
+</p>
 
 </body>
 </html>
