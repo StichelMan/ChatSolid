@@ -16,7 +16,6 @@ be - best, most practical and adaptable way for open-source, contribution and ex
 
 ### Features
 
-````web
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,7 +119,6 @@ For mobile devices the video view is optimized to fit the screen and provide a g
 
 </body>
 </html>
-````
 
 The messages are stored in the user's Solid POD storage as a file containing relevant information about each message
 using the RDF/JS specification which are the Linked Data principles. Here's an example:
