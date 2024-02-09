@@ -16,28 +16,12 @@ be - best, most practical and adaptable way for open-source, contribution and ex
 
 ### Features
 
+````web
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>README - Features</title>
-<style>
-  .container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  .container > div {
-    flex: 0 0 calc(50% - 10px); /* Adjust the width as needed */
-    margin-bottom: 20px;
-  }
-  .container > div > img {
-    max-width: 550px;
-    height: auto;
-min-height: 400px;
-  }
-</style>
 </head>
 <body>
 
@@ -136,6 +120,7 @@ For mobile devices the video view is optimized to fit the screen and provide a g
 
 </body>
 </html>
+````
 
 The messages are stored in the user's Solid POD storage as a file containing relevant information about each message
 using the RDF/JS specification which are the Linked Data principles. Here's an example:
