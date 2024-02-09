@@ -16,14 +16,6 @@ be - best, most practical and adaptable way for open-source, contribution and ex
 
 ### Features
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-
 <p float="left">
 
 <div>
@@ -117,9 +109,6 @@ For mobile devices the video view is optimized to fit the screen and provide a g
 
 </p>
 
-</body>
-</html>
-
 The messages are stored in the user's Solid POD storage as a file containing relevant information about each message
 using the RDF/JS specification which are the Linked Data principles. Here's an example:
 
@@ -139,11 +128,11 @@ using the RDF/JS specification which are the Linked Data principles. Here's an e
 ```  
 
 It's important to note that the current way of storing messages is not the best practice way because Linked Data
-principles are not fully implemented. 
+principles are not fully implemented.
 
-All rules about storing data like messages, in a Solid pod, for chat-related applications can be found on the Solid Project website and
+All rules about storing data like messages, in a Solid pod, for chat-related applications can be found on the Solid
+Project website and
 their github documentation, explained in great detail here: https://solid.github.io/chat/
-
 
 ### Table of Contents
 
