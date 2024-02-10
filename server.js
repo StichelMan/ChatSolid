@@ -2,13 +2,12 @@ const express = require("express");
 const https = require("https");
 const app = express();
 const server = https.createServer(app);
+
 const socket = require("socket.io");
 const io = socket(server, {
     cors: {
-        origin: "*", // Allow requests from all origins
-        methods: ["GET", "POST"], // Allow GET and POST methods
+        origin: "https://chatsolid.elivanstichelen.com/", // Allow requests from all origins
         transports: ["websocket"],
-        allowedHeaders: ["Content-Type", "Authorization"], // Allow specific headers
     }
 });
 
