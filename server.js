@@ -1,6 +1,18 @@
 const express = require("express");
 const https = require("https");
 const app = express();
+app.set("trust proxy", 1); // trust first proxy
+app.use(
+    session({
+        secret: process.env.JWT_SECRET,
+        resave: false,
+        saveUninitialized: true,
+        cookie: {
+            secure: true,
+            sameSite: "none",
+        },
+    })
+);
 const server = https.createServer(app);
 const socket = require("socket.io");
 const io = socket(server);
