@@ -2,7 +2,7 @@
 
 ### Description
 
-The inspiration to initiate this project was born during my undergraduate studies, where I was tasked with investigating
+The inspiration to initiate this project originated from my undergraduate studies, where I was tasked with investigating
 a cutting-edge and relatively unexplored topic in web technology. This assignment was set forth by Odisee, a renowned
 educational institution located in Ghent, Belgium. This repository hosts a React-based chat application that leverages
 decentralized data management using Solid principles
@@ -11,8 +11,7 @@ implementation of Solid Project methodologies and Solid POD storage. The vision 
 more user-centric platform. This application is built with React and utilizes @inrupt/solid packages for essential
 authentication logic while trying to keep the code as simple as possible and trying to keep the dependencies to a
 minimum. The implementation of Solid authentication and the usage of pod storage write/read is done in the - what I
-found to
-be - best, most practical and adaptable way for open-source, contribution and expandability purposes.
+found to be - best, most practical and adaptable way for open-source, contribution and expandability purposes.
 
 ### Features
 
@@ -82,8 +81,7 @@ The folder in which the chat files are stored in the user's Solid POD storage.
 #### Solid pod browser 'Chat Solid' folder's peer chat file (this file is named after the peer user's WebID):
 
 The file in which the chat history is stored in the user's Solid POD storage. This file is named after the peer user's
-WebID to ensure that each user has a unique file for each peer user and as an indicator for who the chat history (
-containing only the pod's owner's messages) belongs/contributes to.
+WebID to ensure that each user has a unique file for each peer user and as an indicator for who the chat history (containing only the pod's owner's messages) belongs/contributes to.
 
   <img alt="inrupt-podbrowser-folder_view screenshot" src="./app_screenshots/inrupt-podbrowser-folder_view.png" height="350"/> 
 </div>
@@ -131,8 +129,7 @@ It's important to note that the current way of storing messages is not the best 
 principles are not fully implemented.
 
 All rules about storing data like messages, in a Solid pod, for chat-related applications can be found on the Solid
-Project website and
-their github documentation, explained in great detail here: https://solid.github.io/chat/
+Project website and their github documentation, explained in great detail here: https://solid.github.io/chat/
 
 ### Table of Contents
 
@@ -142,9 +139,6 @@ their github documentation, explained in great detail here: https://solid.github
 4. Issues and Community Help
 
 ### Installation
-
-Depending on your preference, you can use either npm or yarn to install this package. Please change your package.json
-scripts accordingly and only do so if you know what you are doing.
 
 1. Run the Socket.io server for WebRTC communication
    (Using package manager NPM)
@@ -196,14 +190,13 @@ import {SessionProvider, LoginButton} from "@inrupt/solid-ui-react";
 
 ### Development Guidelines
 
-All development adheres to Inrupt (and Solid) Coding Guidelines. Our linting and testing tools largely automate this
-compliance.
+All development adheres to Inrupt (and Solid) Coding Guidelines.
 
 #### Getting Started
 
 1. Clone the Repository
 2. Install Dependencies
-3. Start websocket server for WebRTC communication
+3. Start websocket (signalling) node server for WebRTC communication
 4. Start the application
 
 ### Using Solid JavaScript Client
