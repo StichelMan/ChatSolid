@@ -33,8 +33,8 @@ const AuthSection = () => {
             ) : (
                 <div className='login-button'>
                     <LoginButton
-                        oidcIssuer="https://inrupt.net"
-                        redirectUrl="https://chatsolid.elivanstichelen.com/"
+                        oidcIssuer="https://inrupt.net" // Replace with or expand to be user-configurable and to support other IdPs
+                        redirectUrl="https://chatsolid.elivanstichelen.com/" // Replace with your own redirect URL
                     >
                         Log In
                     </LoginButton>
@@ -67,6 +67,7 @@ function App() {
     const dataChannelRef = useRef(null);
     const identityChannelRef = useRef(null);
 
+    // Fetch chat history when the partner's WebID changes
     useEffect(() => {
         if (partnerWebId && webId) {
             fetchChatHistory(partnerWebId)
@@ -77,19 +78,21 @@ function App() {
 
                     // Send the chat history to User B (partner) over the data channel
                     if (dataChannelRef.current) {
-                        dataChannelRef.current.send(JSON.stringify({ chatHistory: history }));
+                        dataChannelRef.current.send(JSON.stringify({chatHistory: history}));
                     }
                 });
         }
     }, [partnerWebId]);
 
 
-
+    // Function to set up the socket.io connection
     useEffect(() => {
         setWebId(session?.info?.webId)
         setupSocketConnection();
     }, []);
 
+
+    // Function to set up the socket.io connection
     useEffect(() => {
         const socketOptions = {
             transports: ["websocket"],
@@ -102,7 +105,7 @@ function App() {
             // }
         };
 
-        socket.current = io.connect("https://chatsolidnode.elivanstichelen.com/", socketOptions);
+        socket.current = io.connect("https://chatsolidnode.elivanstichelen.com/", socketOptions); // Replace with your own server URL
         socket.current.on("yourID", (id) => {
             setYourID(id);
         });
@@ -138,13 +141,14 @@ function App() {
         };
     }, []);
 
+    // Handling the use and change of the user's WebID
     useEffect(() => {
         setWebId(session?.info?.webId)
     }, [session?.info?.isLoggedIn, yourID]);
 
-
+    // Function to set up the socket.io connection
     const setupSocketConnection = () => {
-        socket.current = io.connect("https://chatsolidnode.elivanstichelen.com/");
+        socket.current = io.connect("https://chatsolidnode.elivanstichelen.com/"); // Replace with your own server URL
         socket.current.on("yourID", (id) => {
             setYourID(id); // Use session ID as primary identifier
             socket.current.emit('identifyUser', id);
@@ -155,11 +159,13 @@ function App() {
         });
     };
 
+    // Function to set the user's name (optional, unfinished and unrelated but can be used for future features)
     const handleSetUserName = () => {
         if (!userName) return;
         socket.current.emit('setUserInfo', {id: yourID, name: userName}); // Use session ID
     };
 
+    // Function to end a call and clean up the peer connection
     const endCall = () => {
         if (peerRef.current) {
             peerRef.current.destroy();
@@ -172,7 +178,7 @@ function App() {
         setCallerSignal(null);
     };
 
-
+    // Function to call a peer and then establish a peer connection and optional logic on this occurrence
     async function callPeer(id) {
         const chatHistory = chatHistoryRef.current;
         // while (chatHistory === null){
@@ -188,7 +194,7 @@ function App() {
             initiator: true,
             trickle: false,
             config: {
-                iceServers: [{urls: "stun:stun.l.google.com:19302"}]
+                iceServers: [{urls: "stun:stun.l.google.com:19302"}] // Replace with your own STUN or TURN server if needed
             },
             stream: stream,
         });
@@ -256,6 +262,7 @@ function App() {
         peerRef.current = peer; // Set the peerRef to the current peer
     }
 
+    // Function to accept an incoming call and then establish a peer connection and optional logic on this occurrence
     function acceptCall() {
         if (peerRef.current) {
             peerRef.current.destroy();
@@ -267,7 +274,7 @@ function App() {
             initiator: false,
             trickle: false,
             config: {
-                iceServers: [{urls: "stun:stun.l.google.com:19302"}]
+                iceServers: [{urls: "stun:stun.l.google.com:19302"}] // Replace with your own STUN or TURN server if needed
             },
             stream: stream,
         });
@@ -330,6 +337,7 @@ function App() {
         peerRef.current = peer;
     }
 
+    // Function to fetch chat history from the user's Solid pod
     const fetchChatHistory = async (partnerWebId) => {
         console.log("partnerWebId:", partnerWebId); // Add this to log and check the value
 
@@ -353,20 +361,22 @@ function App() {
     };
 
 
+    // Function to process chat history from a SolidDataset to an array of messages which can be displayed in the chat UI (or used for other purposes)
     const processChatHistory = (dataset) => {
         const messages = dataset.graphs.default;
         return Object.entries(messages).map(([url, messageEntry]) => {
-            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/message'].literals['http://www.w3.org/2001/XMLSchema#string'][0];
+            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/message'].literals['http://www.w3.org/2001/XMLSchema#string'][0]; // Replace with the actual predicate URL and Linked Data principles that fit the purpose of the data saved/fetched
             const timestamp = new Date(url.split("#message-")[1]);
-            return { timestamp, message: messageText };
+            return {timestamp, message: messageText};
         });
     };
 
 
+    // Function to log chat messages to the console for debugging
     function logChatMessages(dataset) {
         const messages = dataset.graphs.default;
         Object.entries(messages).forEach(([url, messageEntry]) => {
-            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/message'].literals['http://www.w3.org/2001/XMLSchema#string'][0];
+            const messageText = messageEntry.predicates['http://xmlns.com/foaf/0.1/message'].literals['http://www.w3.org/2001/XMLSchema#string'][0]; // Replace with the actual predicate URL and Linked Data principles that fit the purpose of the data saved/fetched
 
             // Extracting the timestamp from the URL
             const timestamp = url.split("#message-")[1];
@@ -404,7 +414,7 @@ function App() {
             dataset = createSolidDataset();
         }
 
-        const newMessageThing = createThing({name: `message-${new Date().toISOString()}`});
+        const newMessageThing = createThing({name: `message-${new Date().toISOString()}`}); // Replace with the actual predicate URL and Linked Data principles that fit the purpose of the data saved/fetched
         const updatedMessageThing = addStringNoLocale(newMessageThing, FOAF.name, message);
         dataset = setThing(dataset, updatedMessageThing);
 
@@ -416,8 +426,9 @@ function App() {
     };
 
 
+    // Function to send a message over the data channel
     const sendMessage = () => {
-        const newMessage = { timestamp: new Date(), message: `You: ${message}` };
+        const newMessage = {timestamp: new Date(), message: `You: ${message}`};
         setReceivedMessages(oldMsgs => [...oldMsgs, newMessage]);
         if (dataChannelRef.current && message !== "") {
             dataChannelRef.current.send(message);
@@ -426,7 +437,7 @@ function App() {
         }
     };
 
-
+    // Function to handle received messages
     const handleMessageReceive = (data) => {
         try {
             // Attempt to parse received data as JSON
@@ -441,7 +452,10 @@ function App() {
         } catch (e) {
             // If parsing fails, treat it as a regular message
             const receivedMessage = data.toString();
-            setReceivedMessages(oldMsgs => [...oldMsgs, { timestamp: new Date(), message: `Partner: ${receivedMessage}` }]);
+            setReceivedMessages(oldMsgs => [...oldMsgs, {
+                timestamp: new Date(),
+                message: `Partner: ${receivedMessage}`
+            }]);
         }
     };
 
@@ -492,6 +506,7 @@ function App() {
         );
     }
 
+    // Function to handle send message on pressing 'Enter' key
     const handleKeyPress = (e) => {
         // Check if the pressed key is 'Enter'
         if (e.key === 'Enter') {
@@ -499,6 +514,7 @@ function App() {
         }
     };
 
+    // Update the user's identity on the server when the session changes
     useEffect(() => {
         const identifier = session?.info?.isLoggedIn ? session?.info?.webId : yourID;
         if (socket.current && identifier) {
@@ -506,6 +522,7 @@ function App() {
         }
     }, [session?.info?.isLoggedIn, session?.info?.webId, yourID]);
 
+    // Clean up the peer connection and socket.io connection when the user disconnects
     useEffect(() => {
         return () => {
             socket.current.emit('userDisconnect', yourID);
@@ -515,7 +532,7 @@ function App() {
         };
     }, [yourID]);
 
-    // Update the renderCallButtons function
+    // Update the renderCallButtons function based on the calling status
     const renderCallButtons = () => {
         if (Object.keys(users).length <= 1) return (<p>No other users online</p>);
         if (receivingCall || callAccepted || sendingRequest) return (

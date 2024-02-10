@@ -14,17 +14,10 @@ const io = socket(server, {
     }
 });
 
-
-// Set up CORS headers for all routes
-// app.use(function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
-//     res.header("Access-Control-Allow-Methods", "GET, POST"); // Allow GET and POST requests
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//     next();
-// });
-
-
+// Store the list of users
 const users = {};
+
+// Set the timeout for inactive users
 const ACTIVE_TIMEOUT = 10000;
 
 io.on('connection', socket => {
@@ -72,6 +65,7 @@ io.on('connection', socket => {
     }, ACTIVE_TIMEOUT);
 });
 
+// Get the list of active users
 function getActiveUsers() {
     return Object.keys(users).reduce((acc, id) => {
         acc[id] = { lastActive: users[id].lastActive };
