@@ -3,11 +3,14 @@ const https = require("https");
 const app = express();
 const server = https.createServer(app);
 const socket = require("socket.io");
-const io = socket(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
+const io = socket(server);
+
+// Set up CORS headers for all routes
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    next();
 });
 
 const users = {};
