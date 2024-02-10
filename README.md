@@ -225,7 +225,6 @@ For questions about Solid or sharing your work, visit the Solid forum. It's a gr
 #### Bugs and Feature Requests
 
 Public Feedback: File an issue via GitHub.
-Private Feedback or Support: Contact us through the Inrupt Service Desk.
 
 ### Contributing
 
