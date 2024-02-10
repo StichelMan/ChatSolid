@@ -12,7 +12,7 @@ const io = socket(server, {
 
 // Set up CORS headers for all routes
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Origin", "https://chatsolid.elivanstichelen.com/");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     next();
