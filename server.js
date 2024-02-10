@@ -1,13 +1,22 @@
 const express = require("express");
 const https = require("https");
-const cors = require("cors"); // Import the cors middleware
 const app = express();
 const server = https.createServer(app);
 const socket = require("socket.io");
-const io = socket(server);
+const io = socket(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 
-// Use the cors middleware
-app.use(cors());
+// Set up CORS headers for all routes
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "https://chatsolid.elivanstichelen.com/");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    next();
+});
 
 const users = {};
 const ACTIVE_TIMEOUT = 10000;
