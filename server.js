@@ -3,7 +3,12 @@ const https = require("https");
 const app = express();
 const server = https.createServer(app);
 const socket = require("socket.io");
-const io = socket(server);
+const io = socket(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 
 // Set up CORS headers for all routes
 app.use((req, res, next) => {
