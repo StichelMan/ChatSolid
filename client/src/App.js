@@ -134,7 +134,7 @@ function App() {
 
 
     const setupSocketConnection = () => {
-        socket.current = io.connect("/");
+        socket.current = io.connect("https://chatsolidnode.elivanstichelen.com/");
         socket.current.on("yourID", (id) => {
             setYourID(id); // Use session ID as primary identifier
             socket.current.emit('identifyUser', id);
