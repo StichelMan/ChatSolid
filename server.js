@@ -2,7 +2,6 @@ const express = require("express");
 const https = require("https");
 const app = express();
 const server = https.createServer(app);
-
 const socket = require("socket.io");
 const io = socket(server, {
     cors: {
@@ -13,12 +12,13 @@ const io = socket(server, {
 
 
 // Set up CORS headers for all routes
-app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "https://chatsolid.elivanstichelen.com/");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
+    res.header("Access-Control-Allow-Methods", "GET, POST"); // Allow GET and POST requests
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
 
 const users = {};
 const ACTIVE_TIMEOUT = 10000;
