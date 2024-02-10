@@ -1,7 +1,7 @@
 const express = require("express");
-const http = require("http");
+const https = require("https");
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(app);
 const socket = require("socket.io");
 const io = socket(server);
 
@@ -60,4 +60,4 @@ function getActiveUsers() {
     }, {});
 }
 
-server.listen(8000, () => console.log('server is running on port 8000'));
+server.listen(3000, () => console.log('server is running on port 8000'));

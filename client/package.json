@@ -2,7 +2,7 @@
   "name": "chatsolid_elivs",
   "version": "1.0.0",
   "private": true,
-  "proxy": "http://localhost:8000",
+  "proxy": "https://chatsolidnode.elivanstichelen.com/",
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@craco/craco": "^7.1.0",
