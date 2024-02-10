@@ -91,7 +91,18 @@ function App() {
     }, []);
 
     useEffect(() => {
-        socket.current = io.connect("https://chatsolidnode.elivanstichelen.com/");
+        const socketOptions = {
+            transports: ["websocket"],
+            // Add CORS options here
+            withCredentials: true,
+            extraHeaders: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST",
+                "Access-Control-Allow-Headers": "Content-Type"
+            }
+        };
+
+        socket.current = io.connect("https://chatsolidnode.elivanstichelen.com/", socketOptions);
         socket.current.on("yourID", (id) => {
             setYourID(id);
         });
@@ -104,10 +115,9 @@ function App() {
             setReceivingCall(true);
             setCaller(data.from);
             setCallerSignal(data.signal);
-        })
+        });
 
         socket.current.on("callEnded", endCall);
-
 
         // Get user media and set stream
         navigator.mediaDevices.getUserMedia({video: true, audio: true}).then((stream) => {
