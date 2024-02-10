@@ -102,8 +102,7 @@ function App() {
             }
         };
 
-        socket.current = io.connect("https://cors-anywhere.herokuapp.com/https://chatsolidnode.elivanstichelen.com/");
-
+        socket.current = io.connect("https://chatsolidnode.elivanstichelen.com/", socketOptions);
         socket.current.on("yourID", (id) => {
             setYourID(id);
         });
