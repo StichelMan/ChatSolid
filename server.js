@@ -5,10 +5,13 @@ const server = https.createServer(app);
 const socket = require("socket.io");
 const io = socket(server, {
     cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
+        origin: "*", // Allow requests from all origins
+        methods: ["GET", "POST"], // Allow GET and POST methods
+        transports: ["websocket"],
+        allowedHeaders: ["Content-Type", "Authorization"], // Allow specific headers
     }
 });
+
 
 // Set up CORS headers for all routes
 app.use((req, res, next) => {

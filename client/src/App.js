@@ -94,12 +94,12 @@ function App() {
         const socketOptions = {
             transports: ["websocket"],
             // Add CORS options here
-            withCredentials: true,
-            extraHeaders: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST",
-                "Access-Control-Allow-Headers": "Content-Type"
-            }
+            // withCredentials: true,
+            // extraHeaders: {
+            //     "Access-Control-Allow-Origin": "*",
+            //     "Access-Control-Allow-Methods": "GET, POST",
+            //     "Access-Control-Allow-Headers": "Content-Type"
+            // }
         };
 
         socket.current = io.connect("https://chatsolidnode.elivanstichelen.com/", socketOptions);
