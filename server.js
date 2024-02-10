@@ -3,19 +3,15 @@ const https = require("https");
 const app = express();
 const server = https.createServer(app);
 const socket = require("socket.io");
-const io = socket(server);
+const io = socket(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 
 const users = {};
 const ACTIVE_TIMEOUT = 10000;
-
-// Enable CORS middleware
-app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
-    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
-    res.setHeader("Access-Control-Allow-Credentials", true);
-    next();
-});
 
 io.on('connection', socket => {
     // Add the user to the list of users
